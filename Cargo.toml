@@ -1,0 +1,22 @@
+[package]
+name = "blinkt"
+version = "0.1.0"
+authors = ["Rene van der Meer <rene@golemparts.com>"]
+description = "Provides an interface for the Pimoroni Blinkt!, and any similar APA102 strips or boards, on a Raspberry Pi."
+documentation = "https://doc.golemparts.com/blinkt"
+repository = "https://github.com/golemparts/blinkt"
+readme = "README.md"
+license = "MIT"
+keywords = ["apa102","led","pimoroni","blinkt","raspberry","pi"]
+
+[dependencies]
+libc = "0.2"
+enum_primitive = "0.1"
+quick-error = "1.1"
+
+[dependencies.num]
+version = "0.1"
+default-features = false
+
+[dev-dependencies]
+rand = "0.3"
