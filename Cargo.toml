@@ -7,7 +7,7 @@ documentation = "https://doc.golemparts.com/blinkt"
 repository = "https://github.com/golemparts/blinkt"
 readme = "README.md"
 license = "MIT"
-keywords = ["apa102","led","pimoroni","blinkt","raspberry","pi"]
+keywords = ["apa102","pimoroni","blinkt","raspberry","pi"]
 
 [dependencies]
 libc = "0.2"
