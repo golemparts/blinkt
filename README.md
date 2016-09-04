@@ -1,5 +1,6 @@
 # Blinkt
 
+[![Build Status](https://travis-ci.org/golemparts/blinkt.svg?branch=master)](https://travis-ci.org/golemparts/blinkt)
 [![crates.io](https://img.shields.io/crates/v/blinkt.svg)](https://crates.io/crates/blinkt)
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
