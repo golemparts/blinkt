@@ -174,16 +174,14 @@ impl Blinkt {
         gpio.set_mode(pin_clock, Mode::Output);
         gpio.write(pin_clock, Level::Low);
 
-        let blinkt = Blinkt {
+        Ok(Blinkt {
             gpio: gpio,
             pixels: vec![Pixel::default(); num_pixels],
             clear_on_drop: true,
             pin_data: pin_data,
             pin_clock: pin_clock,
             endframe_pulses: ((num_pixels as f32 * 0.5) + 0.5) as usize,
-        };
-
-        Ok(blinkt)
+        })
     }
 
     /// When enabled, clears all pixels when the `Blinkt` goes out of scope.
