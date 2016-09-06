@@ -1,7 +1,7 @@
 # Blinkt
 
 [![Build Status](https://travis-ci.org/golemparts/blinkt.svg?branch=master)](https://travis-ci.org/golemparts/blinkt)
-[![crates.io](https://img.shields.io/crates/v/blinkt.svg)](https://crates.io/crates/blinkt)
+[![crates.io](http://meritbadge.herokuapp.com/blinkt)](https://crates.io/crates/blinkt)
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 Blinkt is a Rust library that provides an interface for the Pimoroni Blinkt!, and any similar APA102 strips or boards, on a Raspberry Pi.
