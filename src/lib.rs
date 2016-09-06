@@ -183,13 +183,6 @@ impl Blinkt {
             endframe_pulses: ((num_pixels as f32 * 0.5) + 0.5) as usize,
         };
 
-        // Send a start frame (32x0) here, because show() doesn't
-        // start with one anymore. See show() for details.
-        blinkt.write_byte(0);
-        blinkt.write_byte(0);
-        blinkt.write_byte(0);
-        blinkt.write_byte(0);
-
         Ok(blinkt)
     }
 
@@ -306,9 +299,12 @@ impl Blinkt {
     /// Sends the contents of the local buffer to the pixels, updating their
     /// LED colors and brightness.
     pub fn show(&self) {
-        // We don't start with a start frame, because we already sent one during setup, and
-        // our end frame incorporates the next start frame.
-
+        // Start frame (32x0)
+        self.write_byte(0);
+        self.write_byte(0);
+        self.write_byte(0);
+        self.write_byte(0);
+        
         // LED frames
         for pixel in &self.pixels {
             self.write_byte(0b11100000 | pixel.brightness); // 3-bit header + 5-bit brightness
@@ -317,10 +313,12 @@ impl Blinkt {
             self.write_byte(pixel.red);
         }
 
-        // End frame + start frame. One version of the APA102 (smaller, darker
-        // die, possibly counterfeit) won't change its LED colors until it
-        // receives a start frame after the end frame. This workaround is
-        // compatible with both the normal and the 'different' APA102.
+        // We send another start frame immediately after our end frame, because
+        // the APA102 version with a smaller, darker die, won't update the
+        // pixels until it receives the next start frame. We still start show()
+        // with a start frame, basically sending it twice, in case the user
+        // connects a Blinkt! while the code is already running. This workaround
+        // is compatible with both the normal and the 'different' APA102.
         self.gpio.write(self.pin_data, Level::Low);
         for _ in 0..32 + self.endframe_pulses {
             self.gpio.write(self.pin_clock, Level::High);
