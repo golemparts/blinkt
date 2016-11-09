@@ -98,7 +98,7 @@ use gpio::{GPIO, Level, Mode};
 
 pub use gpio::Error as GPIOError;
 
-// Default values for the Pimoroni Blinkt! board
+// Default values for the Pimoroni Blinkt! board using BCM GPIO pin numbers
 const DAT: u8 = 23;
 const CLK: u8 = 24;
 const NUM_PIXELS: usize = 8;
@@ -142,8 +142,8 @@ impl Default for Pixel {
 /// Interface for a Blinkt! or any similar APA102 strips/boards.
 ///
 /// By default, Blinkt is set up to communicate with an 8-pixel board through
-/// data pin 23 and clock pin 24. These settings can be changed to support
-/// alternate configurations.
+/// data pin GPIO 23 and clock pin GPIO 24. These settings can be changed to
+/// support alternate configurations.
 pub struct Blinkt {
     gpio: GPIO,
     pixels: Vec<Pixel>,
@@ -157,14 +157,15 @@ impl Blinkt {
     /// Creates a new `Blinkt` using the default settings for a Pimoroni
     /// Blinkt! board.
     ///
-    /// This sets the data pin to 23, the clock pin to 24, and number of pixels
-    /// to 8.
+    /// This sets the data pin to GPIO 23, the clock pin to GPIO 24, and number
+    /// of pixels to 8.
     pub fn new() -> Result<Blinkt> {
         Blinkt::with_settings(DAT, CLK, NUM_PIXELS)
     }
 
     /// Creates a new `Blinkt` using custom settings for the data pin, clock
-    /// pin, and number of pixels.
+    /// pin, and number of pixels. Pins should be specified by their BCM GPIO
+    /// pin numbers.
     pub fn with_settings(pin_data: u8, pin_clock: u8, num_pixels: usize) -> Result<Blinkt> {
         // GPIO init might fail with an error the user could solve
         let mut gpio = try!(GPIO::new());
