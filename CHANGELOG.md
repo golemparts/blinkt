@@ -1,3 +1,8 @@
+# 0.1.2 (March 1, 2017)
+
+* Move GPIO and System modules to external crate
+* Remove temporary blinkt variable binding in new()
+
 # 0.1.1 (September 6, 2016)
 
 * Add start frame to show()
