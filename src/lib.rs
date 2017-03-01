@@ -82,21 +82,15 @@
 
 #![recursion_limit="128"]   // Needed for the quick_error! macro
 
-extern crate libc;
-extern crate num;
-#[macro_use]
-extern crate enum_primitive;
+extern crate rppal;
 #[macro_use]
 extern crate quick_error;
 
-mod gpio;
-mod system;
-
 use std::result;
 
-use gpio::{GPIO, Level, Mode};
+use rppal::gpio::{GPIO, Level, Mode};
 
-pub use gpio::Error as GPIOError;
+pub use rppal::gpio::Error as GPIOError;
 
 // Default values for the Pimoroni Blinkt! board using BCM GPIO pin numbers
 const DAT: u8 = 23;
@@ -303,7 +297,7 @@ impl Blinkt {
         self.write_byte(0);
         self.write_byte(0);
         self.write_byte(0);
-        
+
         // LED frames
         for pixel in &self.pixels {
             self.write_byte(0b11100000 | pixel.brightness); // 3-bit header + 5-bit brightness
