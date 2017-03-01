@@ -6,7 +6,7 @@
 
 Blinkt is a Rust library that provides an interface for the Pimoroni Blinkt!, and any similar APA102 or SK9822 strips or boards, on a Raspberry Pi.
 
-Blinkt accesses the BCM2708/BCM2709 GPIO peripheral either through `/dev/gpiomem` (preferred) or `/dev/mem`. Both the original APA102 and the SK9822 clone are supported. The APA102 RGB LED/driver ICs are referred to as pixels throughout the code and documentation. 
+Blinkt accesses the BCM2708/BCM2709 GPIO peripheral either through `/dev/gpiomem` (preferred) or `/dev/mem`. Both the original APA102 and the SK9822 clone are supported. The APA102 RGB LED/driver ICs are referred to as pixels throughout the code and documentation.
 
 ## Documentation
 
@@ -42,7 +42,7 @@ extern crate blinkt;
 
 use std::{thread, mem};
 use std::time::Duration;
- 
+
 use blinkt::Blinkt;
 
 fn main() {
@@ -63,4 +63,4 @@ fn main() {
 
 ## Copyright and license
 
-Copyright (c) 2016 Rene van der Meer. Released under the [MIT license](LICENSE).
+Copyright (c) 2016-2017 Rene van der Meer. Released under the [MIT license](LICENSE).
