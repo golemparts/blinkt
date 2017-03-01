@@ -2,7 +2,7 @@
 name = "blinkt"
 version = "0.1.2"
 authors = ["Rene van der Meer <rene@golemparts.com>"]
-description = "Provides an interface for the Pimoroni Blinkt!, and any similar APA102 strips or boards, on a Raspberry Pi."
+description = "Provides an interface for the Pimoroni Blinkt!, and any similar APA102 or SK9822 strips or boards, on a Raspberry Pi."
 documentation = "https://doc.golemparts.com/blinkt"
 repository = "https://github.com/golemparts/blinkt"
 readme = "README.md"
