@@ -8,15 +8,11 @@ repository = "https://github.com/golemparts/blinkt"
 readme = "README.md"
 license = "MIT"
 keywords = ["apa102","pimoroni","blinkt","raspberry","pi"]
+publish = false
 
 [dependencies]
-libc = "0.2"
-enum_primitive = "0.1"
 quick-error = "1.1"
-
-[dependencies.num]
-version = "0.1"
-default-features = false
+rppal = "0.1"
 
 [dev-dependencies]
 rand = "0.3"
