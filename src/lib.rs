@@ -19,12 +19,12 @@
 // DEALINGS IN THE SOFTWARE.
 
 //! A Rust library that provides an interface for the Pimoroni Blinkt!, and any
-//! similar APA102 strips or boards, on a Raspberry Pi.
+//! similar APA102 or SK9822 strips or boards, on a Raspberry Pi.
 //!
 //! Blinkt accesses the BCM2708/BCM2709 GPIO peripheral either through
-//! `/dev/gpiomem` (preferred) or `/dev/mem`. Both the original APA102, and the
-//! alternate version with a smaller, darker die, are supported. The APA102 RGB
-//! LED/driver ICs are referred to as pixels throughout the code and documentation.
+//! `/dev/gpiomem` (preferred) or `/dev/mem`. Both the original APA102 and the
+//! SK9822 clone are supported. The APA102 RGB LED/driver ICs are referred to
+//! as pixels throughout the code and documentation.
 //!
 //! Each pixel has a red, green and blue LED with possible values between 0-255.
 //! Additionally, the overall brightness of each pixel can be set to 0.0-1.0, which
@@ -133,7 +133,7 @@ impl Default for Pixel {
     }
 }
 
-/// Interface for a Blinkt! or any similar APA102 strips/boards.
+/// Interface for a Blinkt! or any similar APA102 or SK9822 strips/boards.
 ///
 /// By default, Blinkt is set up to communicate with an 8-pixel board through
 /// data pin GPIO 23 and clock pin GPIO 24. These settings can be changed to
@@ -307,11 +307,11 @@ impl Blinkt {
         }
 
         // We send another start frame immediately after our end frame, because
-        // the APA102 version with a smaller, darker die, won't update the
-        // pixels until it receives the next start frame. We still start show()
-        // with a start frame, basically sending it twice, in case the user
-        // connects a Blinkt! while the code is already running. This workaround
-        // is compatible with both the normal and the 'different' APA102.
+        // the SK9822 clone won't update the pixels until it receives the next
+        // start frame. We still start show() with a start frame, basically
+        // sending it twice, in case the user connects a Blinkt! while the
+        // code is already running. This workaround is compatible with both
+        // the original APA102 and the SK9822 clone.
         self.gpio.write(self.pin_data, Level::Low);
         for _ in 0..32 + self.endframe_pulses {
             self.gpio.write(self.pin_clock, Level::High);
