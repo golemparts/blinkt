@@ -21,10 +21,10 @@
 //! A Rust library that provides an interface for the Pimoroni Blinkt!, and any
 //! similar APA102 or SK9822 strips or boards, on a Raspberry Pi.
 //!
-//! Blinkt accesses the BCM2708/BCM2709 GPIO peripheral either through
-//! `/dev/gpiomem` (preferred) or `/dev/mem`. Both the original APA102 and the
-//! SK9822 clone are supported. The APA102 RGB LED/driver ICs are referred to
-//! as pixels throughout the code and documentation.
+//! Blinkt accesses the BCM283x GPIO peripheral either through `/dev/gpiomem`
+//! (preferred) or `/dev/mem`. Both the original APA102 and the SK9822 clone
+//! are supported. The APA102 RGB LED/driver ICs are referred to as pixels
+//! throughout the code and documentation.
 //!
 //! Each pixel has a red, green and blue LED with possible values between 0-255.
 //! Additionally, the overall brightness of each pixel can be set to 0.0-1.0, which
