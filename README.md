@@ -10,7 +10,7 @@ Blinkt accesses the BCM283x GPIO peripheral either through `/dev/gpiomem` (prefe
 
 ## Documentation
 
-All documentation can be found at [doc.golemparts.com/blinkt](https://doc.golemparts.com/blinkt).
+All documentation can be found at [docs.golemparts.com/blinkt](https://docs.golemparts.com/blinkt).
 
 ## Usage
 
