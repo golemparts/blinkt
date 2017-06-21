@@ -80,7 +80,7 @@
 //! ```
 //!
 
-#![recursion_limit="128"]   // Needed for the quick_error! macro
+#![recursion_limit="128"] // Needed for the quick_error! macro
 
 extern crate rppal;
 #[macro_use]
@@ -231,7 +231,14 @@ impl Blinkt {
             pixel.red = red;
             pixel.green = green;
             pixel.blue = blue;
-            pixel.brightness = (31.0 * if brightness > 1.0 { 1.0 } else if brightness < 0.0 { 0.0 } else { brightness }) as u8;
+            pixel.brightness = (31.0 *
+                                    if brightness > 1.0 {
+                                        1.0
+                                    } else if brightness < 0.0 {
+                                        0.0
+                                    } else {
+                                        brightness
+                                    }) as u8;
         }
     }
 
@@ -242,7 +249,14 @@ impl Blinkt {
     /// 5-bit value.
     pub fn set_pixel_brightness(&mut self, pixel: usize, brightness: f32) {
         if let Some(pixel) = self.pixels.get_mut(pixel) {
-            pixel.brightness = (31.0 * if brightness > 1.0 { 1.0 } else if brightness < 0.0 { 0.0 } else { brightness }) as u8;
+            pixel.brightness = (31.0 *
+                                    if brightness > 1.0 {
+                                        1.0
+                                    } else if brightness < 0.0 {
+                                        0.0
+                                    } else {
+                                        brightness
+                                    }) as u8;
         }
     }
 
@@ -263,7 +277,14 @@ impl Blinkt {
     /// Valid values for red, green and blue are 0-255. Valid values for
     /// brightness are 0.0-1.0, which is converted to a 5-bit value.
     pub fn set_all_pixels_rgbb(&mut self, red: u8, green: u8, blue: u8, brightness: f32) {
-        let brightness: u8 = (31.0 * if brightness > 1.0 { 1.0 } else if brightness < 0.0 { 0.0 } else { brightness }) as u8;
+        let brightness: u8 = (31.0 *
+                                  if brightness > 1.0 {
+                                      1.0
+                                  } else if brightness < 0.0 {
+                                      0.0
+                                  } else {
+                                      brightness
+                                  }) as u8;
         for pixel in &mut self.pixels {
             pixel.red = red;
             pixel.green = green;
@@ -277,7 +298,14 @@ impl Blinkt {
     /// Valid values for brightness are 0.0-1.0, which is converted to a 5-bit
     /// value.
     pub fn set_all_pixels_brightness(&mut self, brightness: f32) {
-        let brightness: u8 = (31.0 * if brightness > 1.0 { 1.0 } else if brightness < 0.0 { 0.0 } else { brightness }) as u8;
+        let brightness: u8 = (31.0 *
+                                  if brightness > 1.0 {
+                                      1.0
+                                  } else if brightness < 0.0 {
+                                      0.0
+                                  } else {
+                                      brightness
+                                  }) as u8;
         for pixel in &mut self.pixels {
             pixel.brightness = brightness;
         }
