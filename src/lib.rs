@@ -107,7 +107,7 @@ quick_error! {
 ///
 /// Some of these errors can be fixed by changing file permissions, or upgrading
 /// to a newer version of Raspbian.
-        GPIO(err: GPIOError) { description(err.description()) from() }
+        Gpio(err: GpioError) { description(err.description()) from() }
     }
 }
 
@@ -372,7 +372,7 @@ fn test_new() {
     let mut blinkt = match Blinkt::new() {
         // GPIO errors are acceptable, since they're likely caused by outside
         // distro/filesystem issues.
-        Err(Error::GPIO(_)) => return,
+        Err(Error::Gpio(_)) => return,
         Ok(blinkt) => blinkt,
     };
 
