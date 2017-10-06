@@ -88,9 +88,9 @@ extern crate quick_error;
 
 use std::result;
 
-use rppal::gpio::{GPIO, Level, Mode};
+use rppal::gpio::{Gpio, Level, Mode};
 
-pub use rppal::gpio::Error as GPIOError;
+pub use rppal::gpio::Error as GpioError;
 
 // Default values for the Pimoroni Blinkt! board using BCM GPIO pin numbers
 const DAT: u8 = 23;
@@ -139,7 +139,7 @@ impl Default for Pixel {
 /// data pin GPIO 23 and clock pin GPIO 24. These settings can be changed to
 /// support alternate configurations.
 pub struct Blinkt {
-    gpio: GPIO,
+    gpio: Gpio,
     pixels: Vec<Pixel>,
     clear_on_drop: bool,
     pin_data: u8,
@@ -162,7 +162,7 @@ impl Blinkt {
     /// pin numbers.
     pub fn with_settings(pin_data: u8, pin_clock: u8, num_pixels: usize) -> Result<Blinkt> {
         // GPIO init might fail with an error the user could solve
-        let mut gpio = try!(GPIO::new());
+        let mut gpio = try!(Gpio::new());
 
         gpio.set_mode(pin_data, Mode::Output);
         gpio.write(pin_data, Level::Low);
