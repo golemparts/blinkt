@@ -1,5 +1,5 @@
-extern crate rand;
 extern crate blinkt;
+extern crate rand;
 
 use std::thread;
 use std::time::Duration;

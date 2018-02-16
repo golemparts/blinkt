@@ -1,6 +1,6 @@
 extern crate blinkt;
 
-use std::{thread, mem};
+use std::{mem, thread};
 use std::time::Duration;
 
 use blinkt::Blinkt;
