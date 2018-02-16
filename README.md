@@ -63,4 +63,4 @@ fn main() {
 
 ## Copyright and license
 
-Copyright (c) 2016-2017 Rene van der Meer. Released under the [MIT license](LICENSE).
+Copyright (c) 2016-2018 Rene van der Meer. Released under the [MIT license](LICENSE).
