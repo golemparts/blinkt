@@ -1,3 +1,7 @@
+# 0.3.0 (Mar 16, 2018)
+
+* Add support for Raspberry Pi 3 B+
+
 # 0.2.0 (Oct 6, 2017)
 
 * Update internal struct/enum names for RPPAL 0.2.0 upgrade
