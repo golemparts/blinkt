@@ -1,9 +1,9 @@
 extern crate blinkt;
 extern crate rand;
 
+use rand::Rng;
 use std::thread;
 use std::time::Duration;
-use rand::Rng;
 
 use blinkt::Blinkt;
 

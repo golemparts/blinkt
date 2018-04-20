@@ -1,5 +1,7 @@
 // Copyright (c) 2016-2018 Rene van der Meer
 //
+// SPI implementation based on the blinkt_spidev fork by Alex Jago.
+//
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
 // to deal in the Software without restriction, including without limitation
@@ -76,7 +78,7 @@
 //!     blinkt.set_pixel(n, 36 * n as u8, 0, 255 - (36 * n as u8));
 //! }
 //!
-//! blinkt.show();
+//! blinkt.show().unwrap();
 //! ```
 //!
 
@@ -85,10 +87,13 @@
 #[macro_use]
 extern crate quick_error;
 extern crate rppal;
+extern crate spidev;
 
-use std::result;
+use std::io::prelude::*;
+use std::{io, result};
 
 use rppal::gpio::{Gpio, Level, Mode};
+use spidev::{SPI_MODE_0, Spidev, SpidevOptions};
 
 pub use rppal::gpio::Error as GpioError;
 
@@ -108,6 +113,11 @@ quick_error! {
 /// Some of these errors can be fixed by changing file permissions, or upgrading
 /// to a newer version of Raspbian.
         Gpio(err: GpioError) { description(err.description()) from() }
+/// An IO operation returned an error.
+///
+/// This is likely related to accessing either the SPI interface (spidev) or the
+/// GPIO bitbang interface (rppal).
+        Io(err: io::Error) { description(err.description()) from() }
     }
 }
 
@@ -133,18 +143,96 @@ impl Default for Pixel {
     }
 }
 
+trait SerialOutput {
+    fn cleanup(&mut self);
+    fn write(&mut self, data: &[u8]) -> Result<()>;
+}
+
+struct BlinktGpio {
+    gpio: Gpio,
+    pin_data: u8,
+    pin_clock: u8,
+}
+
+impl BlinktGpio {
+    pub fn with_settings(pin_data: u8, pin_clock: u8) -> Result<BlinktGpio> {
+        let mut gpio = try!(Gpio::new());
+
+        gpio.set_mode(pin_data, Mode::Output);
+        gpio.write(pin_data, Level::Low);
+        gpio.set_mode(pin_clock, Mode::Output);
+        gpio.write(pin_clock, Level::Low);
+
+        Ok(BlinktGpio {
+            gpio: gpio,
+            pin_data: pin_data,
+            pin_clock: pin_clock,
+        })
+    }
+}
+
+impl SerialOutput for BlinktGpio {
+    fn cleanup(&mut self) {
+        self.gpio.cleanup();
+    }
+
+    fn write(&mut self, data: &[u8]) -> Result<()> {
+        for byte in data {
+            for n in 0..8 {
+                if (byte & (1 << (7 - n))) > 0 {
+                    self.gpio.write(self.pin_data, Level::High);
+                } else {
+                    self.gpio.write(self.pin_data, Level::Low);
+                }
+
+                self.gpio.write(self.pin_clock, Level::High);
+                self.gpio.write(self.pin_clock, Level::Low);
+            }
+        }
+
+        Ok(())
+    }
+}
+
+struct BlinktSpi {
+    spi: Spidev,
+}
+
+impl BlinktSpi {
+    pub fn with_settings(path: &str, clock_speed_hz: u32) -> Result<BlinktSpi> {
+        let mut spi = Spidev::open(path)?;
+        let options = SpidevOptions::new()
+            .bits_per_word(8)
+            .max_speed_hz(clock_speed_hz)
+            .mode(SPI_MODE_0)
+            .build();
+
+        spi.configure(&options)?;
+
+        Ok(BlinktSpi { spi: spi })
+    }
+}
+
+impl SerialOutput for BlinktSpi {
+    fn cleanup(&mut self) {}
+
+    fn write(&mut self, data: &[u8]) -> Result<()> {
+        self.spi.write(data)?;
+
+        Ok(())
+    }
+}
+
 /// Interface for a Blinkt! or any similar APA102 or SK9822 strips/boards.
 ///
 /// By default, Blinkt is set up to communicate with an 8-pixel board through
 /// data pin GPIO 23 and clock pin GPIO 24. These settings can be changed to
 /// support alternate configurations.
 pub struct Blinkt {
-    gpio: Gpio,
+    serial_output: Box<SerialOutput>,
     pixels: Vec<Pixel>,
     clear_on_drop: bool,
-    pin_data: u8,
-    pin_clock: u8,
-    endframe_pulses: usize,
+    end_frame: Vec<u8>,
 }
 
 impl Blinkt {
@@ -161,21 +249,24 @@ impl Blinkt {
     /// pin, and number of pixels. Pins should be specified by their BCM GPIO
     /// pin numbers.
     pub fn with_settings(pin_data: u8, pin_clock: u8, num_pixels: usize) -> Result<Blinkt> {
-        // GPIO init might fail with an error the user could solve
-        let mut gpio = try!(Gpio::new());
-
-        gpio.set_mode(pin_data, Mode::Output);
-        gpio.write(pin_data, Level::Low);
-        gpio.set_mode(pin_clock, Mode::Output);
-        gpio.write(pin_clock, Level::Low);
-
         Ok(Blinkt {
-            gpio: gpio,
+            serial_output: Box::new(BlinktGpio::with_settings(pin_data, pin_clock)?),
             pixels: vec![Pixel::default(); num_pixels],
             clear_on_drop: true,
-            pin_data: pin_data,
-            pin_clock: pin_clock,
-            endframe_pulses: ((num_pixels as f32 * 0.5) + 0.5) as usize,
+            end_frame: vec![0u8; 4 + (((num_pixels as f32 / 16.0f32) + 0.94f32) as usize)]
+        })
+    }
+
+    /// Creates a new `Blinkt` using hardware SPI, with custom settings for the
+    /// clock speed and number of pixels.
+    ///
+    /// This sets the data pin to GPIO 10 and the clock pin to GPIO 11.
+    pub fn with_spi(clock_speed_hz: u32, num_pixels: usize) -> Result<Blinkt> {
+        Ok(Blinkt {
+            serial_output: Box::new(BlinktSpi::with_settings("/dev/spidev0.0", clock_speed_hz)?),
+            pixels: vec![Pixel::default(); num_pixels],
+            clear_on_drop: true,
+            end_frame: vec![0u8; 4 + (((num_pixels as f32 / 16.0f32) + 0.94f32) as usize)]
         })
     }
 
@@ -196,15 +287,15 @@ impl Blinkt {
     ///
     /// Normally, this method is automatically called when Blinkt goes out of
     /// scope, but you can manually call it to handle early/abnormal termination.
-    /// After calling this method, any future calls to `show()` won't have any
-    /// result.
-    pub fn cleanup(&mut self) {
+    pub fn cleanup(&mut self) -> Result<()> {
         if self.clear_on_drop {
             self.clear();
-            self.show();
+            self.show()?;
         }
 
-        self.gpio.cleanup();
+        self.serial_output.cleanup();
+
+        Ok(())
     }
 
     /// Sets the red, green and blue values for a single pixel in the local
@@ -315,60 +406,43 @@ impl Blinkt {
 
     /// Sends the contents of the local buffer to the pixels, updating their
     /// LED colors and brightness.
-    pub fn show(&self) {
-        // Start frame (32x0)
-        self.write_byte(0);
-        self.write_byte(0);
-        self.write_byte(0);
-        self.write_byte(0);
+    pub fn show(&mut self) -> Result<()> {
+        // Start frame (32*0).
+        self.serial_output.write(&[0u8; 4])?;
 
-        // LED frames
+        // LED frames (3*1, 5*brightness, 8*blue, 8*green, 8*red).
         for pixel in &self.pixels {
-            self.write_byte(0b11100000 | pixel.brightness); // 3-bit header + 5-bit brightness
-            self.write_byte(pixel.blue);
-            self.write_byte(pixel.green);
-            self.write_byte(pixel.red);
+            self.serial_output.write(&[
+                0b11100000 | pixel.brightness,
+                pixel.blue,
+                pixel.green,
+                pixel.red,
+            ])?;
         }
 
-        // We send another start frame immediately after our end frame, because
-        // the SK9822 clone won't update the pixels until it receives the next
-        // start frame. We still start show() with a start frame, basically
-        // sending it twice, in case the user connects a Blinkt! while the
-        // code is already running. This workaround is compatible with both
-        // the original APA102 and the SK9822 clone.
-        self.gpio.write(self.pin_data, Level::Low);
-        for _ in 0..32 + self.endframe_pulses {
-            self.gpio.write(self.pin_clock, Level::High);
-            self.gpio.write(self.pin_clock, Level::Low);
-        }
-    }
+        // End frame (8*0 for every 16 pixels, 32*0 SK9822 reset frame).
+        // The SK9822 won't update any pixels until it receives the next
+        // start frame (32*0). The APA102 doesn't care if we send zeroes
+        // instead of ones as the end frame. This workaround is
+        // compatible with both the APA102 and SK9822.
+        self.serial_output.write(&self.end_frame)?;
 
-    fn write_byte(&self, byte: u8) {
-        for n in 0..8 {
-            if (byte & (1 << (7 - n))) > 0 {
-                self.gpio.write(self.pin_data, Level::High);
-            } else {
-                self.gpio.write(self.pin_data, Level::Low);
-            }
-
-            self.gpio.write(self.pin_clock, Level::High);
-            self.gpio.write(self.pin_clock, Level::Low);
-        }
+        Ok(())
     }
 }
 
 impl Drop for Blinkt {
     fn drop(&mut self) {
-        self.cleanup();
+        self.cleanup().unwrap_or(());
     }
 }
 
 #[test]
 fn test_new() {
     let mut blinkt = match Blinkt::new() {
-        // GPIO errors are acceptable, since they're likely caused by outside
+        // Errors are acceptable, since they're likely caused by outside
         // distro/filesystem issues.
-        Err(Error::Gpio(_)) => return,
+        Err(_) => return,
         Ok(blinkt) => blinkt,
     };
 

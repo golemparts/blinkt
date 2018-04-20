@@ -13,6 +13,7 @@ keywords = ["apa102","pimoroni","blinkt","raspberry","pi"]
 [dependencies]
 quick-error = "1.1"
 rppal = "0.4"
+spidev = "0.3"
 
 [dev-dependencies]
 rand = "0.3"
