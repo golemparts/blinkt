@@ -21,12 +21,16 @@
 // DEALINGS IN THE SOFTWARE.
 
 //! A Rust library that provides an interface for the Pimoroni Blinkt!, and any
-//! similar APA102 or SK9822 strips or boards, on a Raspberry Pi.
+//! similar APA102 or SK9822 LED strips or boards, on a Raspberry Pi. The library
+//! supports bitbanging mode on any GPIO pins, and hardware SPI mode on GPIO 10
+//! (physical pin 19) for data, and GPIO 11 (physical pin 23) for clock.
 //!
-//! Blinkt accesses the BCM283x GPIO peripheral either through `/dev/gpiomem`
-//! (preferred) or `/dev/mem`. Both the original APA102 and the SK9822 clone
-//! are supported. The APA102 RGB LED/driver ICs are referred to as pixels
-//! throughout the code and documentation.
+//! For bitbanging mode, Blinkt gains access to the BCM283x GPIO peripheral either
+//! through `/dev/gpiomem` or `/dev/mem`. Hardware SPI mode is controlled
+//! through `/dev/spidev0.0`.
+//!
+//! Both the original APA102 and the SK9822 clone are supported. The APA102 RGB
+//! LED/driver ICs are referred to as pixels throughout the code and documentation.
 //!
 //! Each pixel has a red, green and blue LED with possible values between 0-255.
 //! Additionally, the overall brightness of each pixel can be set to 0.0-1.0, which
@@ -35,9 +39,17 @@
 //! Blinkt stores all color and brightness changes in a local buffer. Use
 //! `show()` to send the buffered values to the pixels.
 //!
+//! By default, all pixels are cleared when Blinkt goes out of
+//! scope. Use `set_clear_on_drop(false)` to disable this behavior. Note that
+//! drop methods aren't called when a program is abnormally terminated (for
+//! instance when a SIGINT isn't caught).
+//!
 //! # Examples
 //!
-//! A complete example that cycles all pixels through red, green and blue.
+//! ### Blinkt! board
+//!
+//! A complete example that cycles all pixels on a Blinkt! board through red, green
+//! and blue.
 //!
 //! ```rust,no_run
 //! extern crate blinkt;
@@ -53,7 +65,7 @@
 //!
 //!     loop {
 //!         blinkt.set_all_pixels(*red, *green, *blue);
-//!         blinkt.show();
+//!         blinkt.show().unwrap();
 //!
 //!         thread::sleep(Duration::from_millis(250));
 //!
@@ -63,24 +75,23 @@
 //! }
 //! ```
 //!
-//! By default, all pixels are cleared when Blinkt goes out of
-//! scope. Use `set_clear_on_drop(false)` to disable this behavior. Note that
-//! drop methods aren't called when a program is abnormally terminated (for
-//! instance when a SIGINT isn't caught).
+//! ### APA102 or SK9822 LED strip
+//!
+//! The recommended way to control an LED strip is to use the hardware SPI
+//! interface through `Blinkt::with_spi()`, with the data line connected to GPIO 10
+//! (physical pin 19), and clock on GPIO 11 (physical pin 23).
 //!
 //! ```rust,no_run
-//! use blinkt::Blinkt;
-//!
-//! let mut blinkt = Blinkt::new().unwrap();
-//! blinkt.set_clear_on_drop(false);
-//!
-//! for n in 0..8 {
-//!     blinkt.set_pixel(n, 36 * n as u8, 0, 255 - (36 * n as u8));
-//! }
-//!
-//! blinkt.show().unwrap();
+//! let mut blinkt = Blinkt::with_spi(16_000_000, 144).unwrap();
 //! ```
 //!
+//! Alternatively, you can use the bitbanging mode through `Blinkt::with_settings()`
+//! to connect the LED strip to any available GPIO pins. However, this is less reliable
+//! than using the hardware SPI interface, and may cause issues on longer strips.
+//!
+//! ```rust,no_run
+//! let mut blinkt = Blinkt::with_settings(23, 24, 8).unwrap();
+//! ```
 
 #![recursion_limit = "128"] // Needed for the quick_error! macro
 
@@ -253,7 +264,7 @@ impl Blinkt {
             serial_output: Box::new(BlinktGpio::with_settings(pin_data, pin_clock)?),
             pixels: vec![Pixel::default(); num_pixels],
             clear_on_drop: true,
-            end_frame: vec![0u8; 4 + (((num_pixels as f32 / 16.0f32) + 0.94f32) as usize)]
+            end_frame: vec![0u8; 4 + (((num_pixels as f32 / 16.0f32) + 0.94f32) as usize)],
         })
     }
 
@@ -266,7 +277,7 @@ impl Blinkt {
             serial_output: Box::new(BlinktSpi::with_settings("/dev/spidev0.0", clock_speed_hz)?),
             pixels: vec![Pixel::default(); num_pixels],
             clear_on_drop: true,
-            end_frame: vec![0u8; 4 + (((num_pixels as f32 / 16.0f32) + 0.94f32) as usize)]
+            end_frame: vec![0u8; 4 + (((num_pixels as f32 / 16.0f32) + 0.94f32) as usize)],
         })
     }
 
