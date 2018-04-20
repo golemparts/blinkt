@@ -82,13 +82,13 @@
 //! (physical pin 19), and clock on GPIO 11 (physical pin 23).
 //!
 //! ```rust,no_run
-//! extern crate blinkt;
-//!
-//! use blinkt::Blinkt;
-//!
-//! fn main() {
-//!     let mut blinkt = Blinkt::with_spi(16_000_000, 144).unwrap();
-//! }
+//! # extern crate blinkt;
+//! #
+//! # use blinkt::Blinkt;
+//! #
+//! # fn main() {
+//! let mut blinkt = Blinkt::with_spi(16_000_000, 144).unwrap();
+//! # }
 //! ```
 //!
 //! Alternatively, you can use the bitbanging mode through `Blinkt::with_settings()`
@@ -96,13 +96,13 @@
 //! than using the hardware SPI interface, and may cause issues on longer strips.
 //!
 //! ```rust,no_run
-//! extern crate blinkt;
-//!
-//! use blinkt::Blinkt;
-//!
-//! fn main() {
-//!     let mut blinkt = Blinkt::with_settings(23, 24, 8).unwrap();
-//! }
+//! # extern crate blinkt;
+//! #
+//! # use blinkt::Blinkt;
+//! #
+//! # fn main() {
+//! let mut blinkt = Blinkt::with_settings(23, 24, 8).unwrap();
+//! # }
 //! ```
 
 #![recursion_limit = "128"] // Needed for the quick_error! macro
@@ -246,11 +246,12 @@ impl SerialOutput for BlinktSpi {
     }
 }
 
-/// Interface for a Blinkt! or any similar APA102 or SK9822 strips/boards.
+/// Interface for the Pimoroni Blinkt!, and any similar APA102 or SK9822 LED
+/// strips or boards.
 ///
 /// By default, Blinkt is set up to communicate with an 8-pixel board through
-/// data pin GPIO 23 and clock pin GPIO 24. These settings can be changed to
-/// support alternate configurations.
+/// data pin GPIO 23 (physical pin 16) and clock pin GPIO 24 (physical pin 18).
+/// These settings can be changed to support alternate configurations.
 pub struct Blinkt {
     serial_output: Box<SerialOutput>,
     pixels: Vec<Pixel>,
@@ -262,15 +263,15 @@ impl Blinkt {
     /// Creates a new `Blinkt` using the default settings for a Pimoroni
     /// Blinkt! board.
     ///
-    /// This sets the data pin to GPIO 23, the clock pin to GPIO 24, and number
-    /// of pixels to 8.
+    /// This sets the data pin to GPIO 23 (physical pin 16), the clock pin to
+    /// GPIO 24 (physical pin 18), and number of pixels to 8.
     pub fn new() -> Result<Blinkt> {
         Blinkt::with_settings(DAT, CLK, NUM_PIXELS)
     }
 
-    /// Creates a new `Blinkt` using custom settings for the data pin, clock
-    /// pin, and number of pixels. Pins should be specified by their BCM GPIO
-    /// pin numbers.
+    /// Creates a new `Blinkt` using bitbanging mode, with custom settings for
+    /// the data pin, clock pin, and number of pixels. Pins should be specified
+    /// by their BCM GPIO pin numbers.
     pub fn with_settings(pin_data: u8, pin_clock: u8, num_pixels: usize) -> Result<Blinkt> {
         Ok(Blinkt {
             serial_output: Box::new(BlinktGpio::with_settings(pin_data, pin_clock)?),
@@ -283,7 +284,15 @@ impl Blinkt {
     /// Creates a new `Blinkt` using hardware SPI, with custom settings for the
     /// clock speed and number of pixels.
     ///
-    /// This sets the data pin to GPIO 10 and the clock pin to GPIO 11.
+    /// This sets the data pin to GPIO 10 (physical pin 19) and the clock pin
+    /// to GPIO 11 (physical pin 23).
+    ///
+    /// The Raspberry Pi allows SPI clock speeds up to 125MHz (125_000_000),
+    /// but the maximum speed supported by LED strips depends a lot on the
+    /// number of pixels and wire quality, and requires some experimentation.
+    /// 32MHz (32_000_000) seems to be the maximum clock speed for a typical
+    /// short LED strip. Visit the [Raspberry Pi SPI Documentation](https://www.raspberrypi.org/documentation/hardware/raspberrypi/spi/)
+    /// page for a complete list of supported clock speeds.
     pub fn with_spi(clock_speed_hz: u32, num_pixels: usize) -> Result<Blinkt> {
         Ok(Blinkt {
             serial_output: Box::new(BlinktSpi::with_settings("/dev/spidev0.0", clock_speed_hz)?),
