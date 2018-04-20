@@ -4,9 +4,11 @@
 [![crates.io](https://meritbadge.herokuapp.com/blinkt)](https://crates.io/crates/blinkt)
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-Blinkt is a Rust library that provides an interface for the Pimoroni Blinkt!, and any similar APA102 or SK9822 strips or boards, on a Raspberry Pi.
+Blinkt is a Rust library that provides an interface for the Pimoroni Blinkt!, and any similar APA102 or SK9822 strips or boards, on a Raspberry Pi. The library supports bitbanging mode on any GPIO pins, or hardware SPI mode on GPIO 10 (physical pin 19) for data, and GPIO 11 (physical pin 23) for clock.
 
-Blinkt accesses the BCM283x GPIO peripheral either through `/dev/gpiomem` (preferred) or `/dev/mem`. Both the original APA102 and the SK9822 clone are supported. The APA102 RGB LED/driver ICs are referred to as pixels throughout the code and documentation.
+For bitbanging mode, Blinkt gains access to the BCM283x GPIO peripheral either through `/dev/gpiomem` or `/dev/mem`. Hardware SPI mode is controlled through `/dev/spidev0.0`.
+
+Both the original APA102 and the SK9822 clone are supported. The APA102 RGB LED/driver ICs are referred to as pixels throughout the code and documentation.
 
 ## Documentation
 
@@ -27,7 +29,7 @@ Link and import `blinkt` from your crate root.
 extern crate blinkt;
 ```
 
-Call `Blinkt::new()` to create a new Blinkt with the default settings. In production code, you'll want to parse the result rather than unwrap it.
+Call `Blinkt::new()` to create a new Blinkt with the default settings. Alternative configuration options are available through `Blinkt::with_settings()` and `Blinkt::with_spi()`. In production code, you'll want to parse the result rather than unwrap it. 
 
 ```rust
 use blinkt::Blinkt;
@@ -66,7 +68,7 @@ fn main() {
 To control an LED strip, consisting of 144 pixels, connected to the Raspberry Pi's hardware SPI pins (data on GPIO 10 (physical pin 19), and clock on GPIO 11 (physical pin 23)), at 16MHz, replace the Blinkt::new() line in the above example with the following. You may have to tweak the maximum speed based on the number of pixels and wire quality.
 
 ```rust
-    let mut blinkt = Blinkt::with_spi(16_000_000, 144).unwrap();
+let mut blinkt = Blinkt::with_spi(16_000_000, 144).unwrap();
 ```
 
 
