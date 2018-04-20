@@ -156,7 +156,7 @@ struct BlinktGpio {
 
 impl BlinktGpio {
     pub fn with_settings(pin_data: u8, pin_clock: u8) -> Result<BlinktGpio> {
-        let mut gpio = try!(Gpio::new());
+        let mut gpio = Gpio::new()?;
 
         gpio.set_mode(pin_data, Mode::Output);
         gpio.write(pin_data, Level::Low);
