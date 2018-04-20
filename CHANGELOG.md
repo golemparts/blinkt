@@ -1,3 +1,11 @@
+# 0.4.0 (Apr 21, 2018)
+
+* Add support for hardware SPI through Blinkt::with_spi()
+* Add a Result return value to show() to catch potential SPI or GPIO errors
+* Fix miscalculated number of end frame pulses for increased performance
+* Replace start frame and end frame loops with slices for increased performance
+* Minor version bump due to incompatible API changes in a 0.x.x release
+
 # 0.3.0 (Mar 16, 2018)
 
 * Add support for Raspberry Pi 3 B+
