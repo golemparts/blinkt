@@ -82,7 +82,13 @@
 //! (physical pin 19), and clock on GPIO 11 (physical pin 23).
 //!
 //! ```rust,no_run
-//! let mut blinkt = Blinkt::with_spi(16_000_000, 144).unwrap();
+//! extern crate blinkt;
+//!
+//! use blinkt::Blinkt;
+//!
+//! fn main() {
+//!     let mut blinkt = Blinkt::with_spi(16_000_000, 144).unwrap();
+//! }
 //! ```
 //!
 //! Alternatively, you can use the bitbanging mode through `Blinkt::with_settings()`
@@ -90,7 +96,13 @@
 //! than using the hardware SPI interface, and may cause issues on longer strips.
 //!
 //! ```rust,no_run
-//! let mut blinkt = Blinkt::with_settings(23, 24, 8).unwrap();
+//! extern crate blinkt;
+//!
+//! use blinkt::Blinkt;
+//!
+//! fn main() {
+//!     let mut blinkt = Blinkt::with_settings(23, 24, 8).unwrap();
+//! }
 //! ```
 
 #![recursion_limit = "128"] // Needed for the quick_error! macro
