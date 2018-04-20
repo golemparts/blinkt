@@ -35,7 +35,9 @@ use blinkt::Blinkt;
 let mut blinkt = Blinkt::new().unwrap();
 ```
 
-## Example
+## Examples
+
+The example below can be used as a quickstart guide for controlling a Blinkt! board.
 
 ```rust
 extern crate blinkt;
@@ -60,6 +62,13 @@ fn main() {
     }
 }
 ```
+
+To control an LED strip, consisting of 144 pixels, connected to the Raspberry Pi's hardware SPI pins (data on GPIO 10 (physical pin 19), and clock on GPIO 11 (physical pin 23)), at 16MHz, replace the Blinkt::new() line in the above example with the following. You may have to tweak the maximum speed based on the number of pixels and wire quality.
+
+```rust
+    let mut blinkt = Blinkt::with_spi(16_000_000, 144).unwrap();
+```
+
 
 ## Copyright and license
 
