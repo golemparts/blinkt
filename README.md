@@ -18,7 +18,7 @@ Add a dependency for `blinkt` to your `Cargo.toml`.
 
 ```toml
 [dependencies]
-blinkt = "0.3"
+blinkt = "0.4"
 ```
 
 Link and import `blinkt` from your crate root.
@@ -51,7 +51,7 @@ fn main() {
 
     loop {
         blinkt.set_all_pixels(*red, *green, *blue);
-        blinkt.show();
+        blinkt.show().unwrap();
 
         thread::sleep(Duration::from_millis(250));
 
