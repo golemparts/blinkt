@@ -39,7 +39,7 @@ let mut blinkt = Blinkt::new().unwrap();
 
 ## Examples
 
-The example below can be used as a quickstart guide for controlling a Blinkt! board.
+The example below demonstrates swapping all pixels on a Blinkt! board between red, green and blue.
 
 ```rust
 extern crate blinkt;
