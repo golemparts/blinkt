@@ -1,6 +1,6 @@
 [package]
 name = "blinkt"
-version = "0.3.0"
+version = "0.4.0"
 authors = ["Rene van der Meer <rene@golemparts.com>"]
 description = "Provides an interface for the Pimoroni Blinkt!, and any similar APA102 or SK9822 strips or boards, on a Raspberry Pi."
 documentation = "https://doc.golemparts.com/blinkt"
