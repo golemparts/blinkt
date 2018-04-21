@@ -29,7 +29,7 @@ Link and import `blinkt` from your crate root.
 extern crate blinkt;
 ```
 
-Call `Blinkt::new()` to create a new Blinkt with the default settings. Alternative configuration options are available through `Blinkt::with_settings()` and `Blinkt::with_spi()`. In production code, you'll want to parse the result rather than unwrap it. 
+Call `Blinkt::new()` to create a new Blinkt with the default settings. Alternative configuration options are available through `Blinkt::with_settings()` and `Blinkt::with_spi()`. In production code, you'll want to parse the result rather than unwrap it.
 
 ```rust
 use blinkt::Blinkt;
@@ -70,7 +70,6 @@ To control an LED strip, consisting of 144 pixels, connected to the Raspberry Pi
 ```rust
 let mut blinkt = Blinkt::with_spi(16_000_000, 144).unwrap();
 ```
-
 
 ## Copyright and license
 
