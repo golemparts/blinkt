@@ -129,12 +129,12 @@ const DEFAULT_BRIGHTNESS: u8 = 7;
 
 quick_error! {
     #[derive(Debug)]
-/// Errors that can occur when creating a new Blinkt.
+/// Errors that can occur while using Blinkt.
     pub enum Error {
 /// Accessing the GPIO peripheral returned an error.
 ///
 /// Some of these errors can be fixed by changing file permissions, or upgrading
-/// to a newer version of Raspbian.
+/// to a more recent version of Raspbian.
         Gpio(err: GpioError) { description(err.description()) from() }
 /// An IO operation returned an error.
 ///
