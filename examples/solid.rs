@@ -11,7 +11,7 @@ fn main() {
 
     loop {
         blinkt.set_all_pixels(*red, *green, *blue);
-        blinkt.show();
+        blinkt.show().unwrap();
 
         thread::sleep(Duration::from_millis(250));
 

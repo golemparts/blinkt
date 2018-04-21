@@ -17,7 +17,7 @@ fn main() {
         for n in 0..8 {
             blinkt.set_pixel(n, rng.gen::<u8>(), rng.gen::<u8>(), rng.gen::<u8>());
         }
-        blinkt.show();
+        blinkt.show().unwrap();
 
         thread::sleep(Duration::from_millis(50));
     }
