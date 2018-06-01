@@ -1,7 +1,5 @@
 // Copyright (c) 2016-2018 Rene van der Meer
 //
-// SPI implementation based on the blinkt_spidev fork by Alex Jago.
-//
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
 // to deal in the Software without restriction, including without limitation
@@ -110,15 +108,14 @@
 #[macro_use]
 extern crate quick_error;
 extern crate rppal;
-extern crate spidev;
 
-use std::io::prelude::*;
 use std::{io, result};
 
 use rppal::gpio::{Gpio, Level, Mode};
-use spidev::{SPI_MODE_0, Spidev, SpidevOptions};
+use rppal::spi;
 
 pub use rppal::gpio::Error as GpioError;
+pub use rppal::spi::Error as SpiError;
 
 // Default values for the Pimoroni Blinkt! board using BCM GPIO pin numbers
 const DAT: u8 = 23;
@@ -136,10 +133,9 @@ quick_error! {
 /// Some of these errors can be fixed by changing file permissions, or upgrading
 /// to a more recent version of Raspbian.
         Gpio(err: GpioError) { description(err.description()) from() }
+/// Accessing the SPI peripheral returned an error.
+        Spi(err: SpiError) { description(err.description()) from() }
 /// An IO operation returned an error.
-///
-/// This is likely related to accessing either the SPI interface (spidev) or the
-/// GPIO bitbang interface (rppal).
         Io(err: io::Error) { description(err.description()) from() }
     }
 }
@@ -218,21 +214,19 @@ impl SerialOutput for BlinktGpio {
 }
 
 struct BlinktSpi {
-    spi: Spidev,
+    spi: spi::Spi,
 }
 
 impl BlinktSpi {
-    pub fn with_settings(path: &str, clock_speed_hz: u32) -> Result<BlinktSpi> {
-        let mut spi = Spidev::open(path)?;
-        let options = SpidevOptions::new()
-            .bits_per_word(8)
-            .max_speed_hz(clock_speed_hz)
-            .mode(SPI_MODE_0)
-            .build();
-
-        spi.configure(&options)?;
-
-        Ok(BlinktSpi { spi: spi })
+    pub fn with_settings(clock_speed_hz: u32) -> Result<BlinktSpi> {
+        Ok(BlinktSpi {
+            spi: spi::Spi::new(
+                spi::Bus::Spi0,
+                spi::SlaveSelect::Ss0,
+                clock_speed_hz,
+                spi::Mode::Mode0,
+            )?,
+        })
     }
 }
 
@@ -295,7 +289,7 @@ impl Blinkt {
     /// page for a complete list of supported clock speeds.
     pub fn with_spi(clock_speed_hz: u32, num_pixels: usize) -> Result<Blinkt> {
         Ok(Blinkt {
-            serial_output: Box::new(BlinktSpi::with_settings("/dev/spidev0.0", clock_speed_hz)?),
+            serial_output: Box::new(BlinktSpi::with_settings(clock_speed_hz)?),
             pixels: vec![Pixel::default(); num_pixels],
             clear_on_drop: true,
             end_frame: vec![0u8; 4 + (((num_pixels as f32 / 16.0f32) + 0.94f32) as usize)],
