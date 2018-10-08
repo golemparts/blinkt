@@ -2,13 +2,13 @@
 name = "blinkt"
 version = "0.4.0"
 authors = ["Rene van der Meer <rene@golemparts.com>"]
-description = "Provides an interface for the Pimoroni Blinkt!, and any similar APA102 or SK9822 LED strips or boards, on a Raspberry Pi."
+description = "Interface for the Pimoroni Blinkt!, and any similar APA102 or SK9822 LED strips or boards, on a Raspberry Pi."
 documentation = "https://docs.golemparts.com/blinkt"
 repository = "https://github.com/golemparts/blinkt"
 readme = "README.md"
 license = "MIT"
 categories = ["embedded", "hardware-support"]
-keywords = ["apa102","pimoroni","blinkt","raspberry","pi"]
+keywords = ["apa102","sk9822","blinkt","raspberry","pi"]
 
 [dependencies]
 quick-error = "1.1"
