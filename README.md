@@ -20,7 +20,7 @@ Add a dependency for `blinkt` to your `Cargo.toml`.
 
 ```toml
 [dependencies]
-blinkt = "0.4"
+blinkt = "0.5"
 ```
 
 Link and import `blinkt` from your crate root.

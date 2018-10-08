@@ -103,7 +103,10 @@
 //! # }
 //! ```
 
-#![recursion_limit = "128"] // Needed for the quick_error! macro
+// Used by rustdoc to link other crates to blinkt's docs
+#![doc(html_root_url = "https://docs.rs/blinkt/0.5.0")]
+// Needed for the quick_error! macro
+#![recursion_limit = "128"]
 
 #[macro_use]
 extern crate quick_error;
