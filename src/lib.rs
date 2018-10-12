@@ -186,9 +186,9 @@ impl BlinktGpio {
         gpio.write(pin_clock, Level::Low);
 
         Ok(BlinktGpio {
-            gpio: gpio,
-            pin_data: pin_data,
-            pin_clock: pin_clock,
+            gpio,
+            pin_data,
+            pin_clock,
         })
     }
 }
@@ -442,7 +442,7 @@ impl Blinkt {
         // LED frames (3*1, 5*brightness, 8*blue, 8*green, 8*red).
         for pixel in &self.pixels {
             self.serial_output.write(&[
-                0b11100000 | pixel.brightness,
+                0b1110_0000 | pixel.brightness,
                 pixel.blue,
                 pixel.green,
                 pixel.red,
