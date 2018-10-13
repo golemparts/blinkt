@@ -148,19 +148,34 @@ pub type Result<T> = result::Result<T, Error>;
 
 #[derive(Debug, Copy, Clone)]
 struct Pixel {
-    red: u8,
-    green: u8,
-    blue: u8,
-    brightness: u8,
+    value: [u8; 4], // Brightness, blue, green, red
+}
+
+impl Pixel {
+    fn set_rgb(&mut self, red: u8, green: u8, blue: u8) {
+        self.value[1] = blue;
+        self.value[2] = green;
+        self.value[3] = red;
+    }
+
+    fn set_brightness(&mut self, brightness: f32) {
+        self.value[0] = 0b1110_0000 | ((31.0 * brightness.max(0.0).min(1.0)) as u8);
+    }
+
+    fn set_rgbb(&mut self, red: u8, green: u8, blue: u8, brightness: f32) {
+        self.set_rgb(red, green, blue);
+        self.set_brightness(brightness);
+    }
+
+    fn bytes(&self) -> &[u8] {
+        &self.value
+    }
 }
 
 impl Default for Pixel {
     fn default() -> Pixel {
         Pixel {
-            red: 0,
-            green: 0,
-            blue: 0,
-            brightness: DEFAULT_BRIGHTNESS,
+            value: [0b1110_0000 | DEFAULT_BRIGHTNESS, 0, 0, 0],
         }
     }
 }
@@ -334,9 +349,7 @@ impl Blinkt {
     /// for red, green and blue are 0-255.
     pub fn set_pixel(&mut self, pixel: usize, red: u8, green: u8, blue: u8) {
         if let Some(pixel) = self.pixels.get_mut(pixel) {
-            pixel.red = red;
-            pixel.green = green;
-            pixel.blue = blue;
+            pixel.set_rgb(red, green, blue);
         }
     }
 
@@ -348,16 +361,7 @@ impl Blinkt {
     /// are 0.0-1.0, which is converted to a 5-bit value.
     pub fn set_pixel_rgbb(&mut self, pixel: usize, red: u8, green: u8, blue: u8, brightness: f32) {
         if let Some(pixel) = self.pixels.get_mut(pixel) {
-            pixel.red = red;
-            pixel.green = green;
-            pixel.blue = blue;
-            pixel.brightness = (31.0 * if brightness > 1.0 {
-                1.0
-            } else if brightness < 0.0 {
-                0.0
-            } else {
-                brightness
-            }) as u8;
+            pixel.set_rgbb(red, green, blue, brightness);
         }
     }
 
@@ -368,13 +372,7 @@ impl Blinkt {
     /// 5-bit value.
     pub fn set_pixel_brightness(&mut self, pixel: usize, brightness: f32) {
         if let Some(pixel) = self.pixels.get_mut(pixel) {
-            pixel.brightness = (31.0 * if brightness > 1.0 {
-                1.0
-            } else if brightness < 0.0 {
-                0.0
-            } else {
-                brightness
-            }) as u8;
+            pixel.set_brightness(brightness);
         }
     }
 
@@ -383,9 +381,7 @@ impl Blinkt {
     /// Valid values for red, green and blue are 0-255.
     pub fn set_all_pixels(&mut self, red: u8, green: u8, blue: u8) {
         for pixel in &mut self.pixels {
-            pixel.red = red;
-            pixel.green = green;
-            pixel.blue = blue;
+            pixel.set_rgb(red, green, blue);
         }
     }
 
@@ -395,18 +391,8 @@ impl Blinkt {
     /// Valid values for red, green and blue are 0-255. Valid values for
     /// brightness are 0.0-1.0, which is converted to a 5-bit value.
     pub fn set_all_pixels_rgbb(&mut self, red: u8, green: u8, blue: u8, brightness: f32) {
-        let brightness: u8 = (31.0 * if brightness > 1.0 {
-            1.0
-        } else if brightness < 0.0 {
-            0.0
-        } else {
-            brightness
-        }) as u8;
         for pixel in &mut self.pixels {
-            pixel.red = red;
-            pixel.green = green;
-            pixel.blue = blue;
-            pixel.brightness = brightness;
+            pixel.set_rgbb(red, green, blue, brightness);
         }
     }
 
@@ -415,15 +401,8 @@ impl Blinkt {
     /// Valid values for brightness are 0.0-1.0, which is converted to a 5-bit
     /// value.
     pub fn set_all_pixels_brightness(&mut self, brightness: f32) {
-        let brightness: u8 = (31.0 * if brightness > 1.0 {
-            1.0
-        } else if brightness < 0.0 {
-            0.0
-        } else {
-            brightness
-        }) as u8;
         for pixel in &mut self.pixels {
-            pixel.brightness = brightness;
+            pixel.set_brightness(brightness);
         }
     }
 
@@ -441,12 +420,7 @@ impl Blinkt {
 
         // LED frames (3*1, 5*brightness, 8*blue, 8*green, 8*red).
         for pixel in &self.pixels {
-            self.serial_output.write(&[
-                0b1110_0000 | pixel.brightness,
-                pixel.blue,
-                pixel.green,
-                pixel.red,
-            ])?;
+            self.serial_output.write(pixel.bytes())?;
         }
 
         // End frame (8*0 for every 16 pixels, 32*0 SK9822 reset frame).
