@@ -2,6 +2,7 @@
 
 ## 0.5.0 (TBD)
 
+* Add support for Raspberry Pi 3 A+.
 * Replace spidev dependency with RPPAL's SPI module.
 * (Breaking change) Add Error::Spi to indicate an SPI error occurred.
 
