@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.5.0 (November 15, 2018)
+## 0.5.0 (November 16, 2018)
 
 * Add support for Raspberry Pi 3 A+.
 * Replace spidev dependency with RPPAL's SPI module.
