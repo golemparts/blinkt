@@ -11,7 +11,7 @@ categories = ["embedded", "hardware-support"]
 keywords = ["apa102","sk9822","blinkt","raspberry","pi"]
 
 [dependencies]
-quick-error = "1.1"
+quick-error = "1.2"
 rppal = "0.9"
 
 [dev-dependencies]
