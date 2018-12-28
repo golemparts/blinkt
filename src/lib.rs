@@ -107,12 +107,11 @@
 #![doc(html_root_url = "https://docs.rs/blinkt/0.5.0")]
 // Needed for the quick_error! macro
 #![recursion_limit = "128"]
-
-#[macro_use]
-extern crate quick_error;
-extern crate rppal;
+#![allow(clippy::new_ret_no_self)]
 
 use std::{io, result};
+
+use quick_error::quick_error;
 
 use rppal::gpio::{Gpio, OutputPin};
 use rppal::spi;
@@ -256,7 +255,7 @@ impl SerialOutput for BlinktSpi {
 /// data pin GPIO 23 (physical pin 16) and clock pin GPIO 24 (physical pin 18).
 /// These settings can be changed to support alternate configurations.
 pub struct Blinkt {
-    serial_output: Box<SerialOutput>,
+    serial_output: Box<dyn SerialOutput>,
     pixels: Vec<Pixel>,
     clear_on_drop: bool,
     end_frame: Vec<u8>,
