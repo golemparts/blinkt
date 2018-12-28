@@ -114,7 +114,7 @@ extern crate rppal;
 
 use std::{io, result};
 
-use rppal::gpio::{Gpio, Level, Mode};
+use rppal::gpio::{Gpio, OutputPin};
 use rppal::spi;
 
 pub use rppal::gpio::Error as GpioError;
@@ -181,27 +181,24 @@ impl Default for Pixel {
 }
 
 trait SerialOutput {
-    fn cleanup(&mut self);
     fn write(&mut self, data: &[u8]) -> Result<()>;
 }
 
 struct BlinktGpio {
-    gpio: Gpio,
-    pin_data: u8,
-    pin_clock: u8,
+    pin_data: OutputPin,
+    pin_clock: OutputPin,
 }
 
 impl BlinktGpio {
     pub fn with_settings(pin_data: u8, pin_clock: u8) -> Result<BlinktGpio> {
-        let mut gpio = Gpio::new()?;
+        let gpio = Gpio::new()?;
+        let mut pin_data = gpio.get(pin_data).unwrap().into_output();
+        let mut pin_clock = gpio.get(pin_clock).unwrap().into_output();
 
-        gpio.set_mode(pin_data, Mode::Output);
-        gpio.write(pin_data, Level::Low);
-        gpio.set_mode(pin_clock, Mode::Output);
-        gpio.write(pin_clock, Level::Low);
+        pin_data.set_low();
+        pin_clock.set_low();
 
         Ok(BlinktGpio {
-            gpio,
             pin_data,
             pin_clock,
         })
@@ -209,21 +206,17 @@ impl BlinktGpio {
 }
 
 impl SerialOutput for BlinktGpio {
-    fn cleanup(&mut self) {
-        self.gpio.cleanup();
-    }
-
     fn write(&mut self, data: &[u8]) -> Result<()> {
         for byte in data {
             for n in 0..8 {
                 if (byte & (1 << (7 - n))) > 0 {
-                    self.gpio.write(self.pin_data, Level::High);
+                    self.pin_data.set_high();
                 } else {
-                    self.gpio.write(self.pin_data, Level::Low);
+                    self.pin_data.set_low();
                 }
 
-                self.gpio.write(self.pin_clock, Level::High);
-                self.gpio.write(self.pin_clock, Level::Low);
+                self.pin_clock.set_high();
+                self.pin_clock.set_low();
             }
         }
 
@@ -249,8 +242,6 @@ impl BlinktSpi {
 }
 
 impl SerialOutput for BlinktSpi {
-    fn cleanup(&mut self) {}
-
     fn write(&mut self, data: &[u8]) -> Result<()> {
         self.spi.write(data)?;
 
@@ -336,8 +327,6 @@ impl Blinkt {
             self.clear();
             self.show()?;
         }
-
-        self.serial_output.cleanup();
 
         Ok(())
     }
