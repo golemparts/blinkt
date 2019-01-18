@@ -73,4 +73,4 @@ let mut blinkt = Blinkt::with_spi(16_000_000, 144).unwrap();
 
 ## Copyright and license
 
-Copyright (c) 2016-2018 Rene van der Meer. Released under the [MIT license](LICENSE).
+Copyright (c) 2016-2019 Rene van der Meer. Released under the [MIT license](LICENSE).
