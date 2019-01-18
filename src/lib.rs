@@ -105,13 +105,11 @@
 
 // Used by rustdoc to link other crates to blinkt's docs
 #![doc(html_root_url = "https://docs.rs/blinkt/0.5.0")]
-// Needed for the quick_error! macro
-#![recursion_limit = "128"]
-#![allow(clippy::new_ret_no_self)]
 
-use std::{io, result};
-
-use quick_error::quick_error;
+use std::error;
+use std::fmt;
+use std::io;
+use std::result;
 
 use rppal::gpio::{Gpio, OutputPin};
 use rppal::spi;
@@ -126,19 +124,47 @@ const NUM_PIXELS: usize = 8;
 
 const DEFAULT_BRIGHTNESS: u8 = 7;
 
-quick_error! {
-    #[derive(Debug)]
+#[derive(Debug)]
 /// Errors that can occur while using Blinkt.
-    pub enum Error {
-/// Accessing the GPIO peripheral returned an error.
-///
-/// Some of these errors can be fixed by changing file permissions, or upgrading
-/// to a more recent version of Raspbian.
-        Gpio(err: GpioError) { description(err.description()) from() }
-/// Accessing the SPI peripheral returned an error.
-        Spi(err: SpiError) { description(err.description()) from() }
-/// An IO operation returned an error.
-        Io(err: io::Error) { description(err.description()) from() }
+pub enum Error {
+    /// Accessing the GPIO peripheral returned an error.
+    ///
+    /// Some of these errors can be fixed by changing file permissions, or upgrading
+    /// to a more recent version of Raspbian.
+    Gpio(GpioError),
+    /// Accessing the SPI peripheral returned an error.
+    Spi(SpiError),
+    /// An I/O operation returned an error.
+    Io(io::Error),
+}
+
+impl fmt::Display for Error {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match *self {
+            Error::Gpio(ref err) => write!(f, "GPIO error: {}", err),
+            Error::Spi(ref err) => write!(f, "SPI error: {}", err),
+            Error::Io(ref err) => write!(f, "I/O error: {}", err),
+        }
+    }
+}
+
+impl error::Error for Error {}
+
+impl From<io::Error> for Error {
+    fn from(err: io::Error) -> Error {
+        Error::Io(err)
+    }
+}
+
+impl From<GpioError> for Error {
+    fn from(err: GpioError) -> Error {
+        Error::Gpio(err)
+    }
+}
+
+impl From<SpiError> for Error {
+    fn from(err: SpiError) -> Error {
+        Error::Spi(err)
     }
 }
 
