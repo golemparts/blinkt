@@ -34,15 +34,18 @@ use rand::{self, Rng};
 use blinkt::Blinkt;
 
 fn main() -> Result<(), Box<dyn Error>> {
-    let mut rng = rand::thread_rng();
     let mut blinkt = Blinkt::new()?;
+    let mut rng = rand::thread_rng();
 
     blinkt.set_all_pixels_brightness(0.1);
 
     loop {
-        for n in 0..8 {
-            blinkt.set_pixel(n, rng.gen(), rng.gen(), rng.gen());
+        // Iterate over all pixels, setting red, green and blue to random values.
+        for pixel in &mut blinkt {
+            pixel.set_rgb(rng.gen(), rng.gen(), rng.gen());
         }
+
+        // Send the new color values to the Blinkt! board.
         blinkt.show()?;
 
         thread::sleep(Duration::from_millis(100));
