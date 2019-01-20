@@ -63,8 +63,14 @@ fn main() -> Result<(), Box<dyn Error>> {
 To control an LED strip, consisting of 144 pixels, connected to the Raspberry Pi's hardware SPI pins (data on GPIO 10 (physical pin 19), and clock on GPIO 11 (physical pin 23)), at 16MHz clock speed, replace the Blinkt::new() line in the above example with the following. You may have to tweak the maximum clock speed based on the number of pixels and wire quality.
 
 ```rust
-let mut blinkt = Blinkt::with_spi(16_000_000, 144).unwrap();
+let mut blinkt = Blinkt::with_spi(16_000_000, 144)?;
 ```
+
+Additional examples can be found in the `examples` directory.
+
+## Cross compilation
+
+If you're not working directly on a Raspberry Pi, you'll likely need to cross compile your code for the appropriate ARM architecture. Check out [this guide](https://github.com/japaric/rust-cross) for more information, or try the [cross](https://github.com/japaric/cross) project for "zero setup" cross compilation.
 
 ## Copyright and license
 
