@@ -29,7 +29,7 @@ use std::time::Duration;
 use std::{mem, thread};
 
 // The simple-signal crate is used to handle incoming signals.
-use simple_signal::{set_handler, Signal};
+use simple_signal::{self, Signal};
 
 use blinkt::Blinkt;
 
@@ -41,7 +41,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let r = running.clone();
 
     // When a SIGINT (Ctrl-C) or SIGTERM signal is caught, atomically set running to false.
-    set_handler(&[Signal::Int, Signal::Term], move |_| {
+    simple_signal::set_handler(&[Signal::Int, Signal::Term], move |_| {
         r.store(false, Ordering::SeqCst);
     });
 
