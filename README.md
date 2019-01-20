@@ -24,18 +24,12 @@ Add a dependency for `blinkt` to your `Cargo.toml`.
 blinkt = "0.5"
 ```
 
-Link and import `blinkt` from your crate root.
-
-```rust
-extern crate blinkt;
-```
-
-Call `Blinkt::new()` to create a new Blinkt with the default settings. Alternative configuration options are available through `Blinkt::with_settings()` and `Blinkt::with_spi()`. In production code, you'll want to parse the result rather than unwrap it.
+Call `Blinkt::new()` to create a new Blinkt with the default settings. Alternative configuration options are available through `Blinkt::with_settings()` and `Blinkt::with_spi()`.
 
 ```rust
 use blinkt::Blinkt;
 
-let mut blinkt = Blinkt::new().unwrap();
+let mut blinkt = Blinkt::new()?;
 ```
 
 ## Examples
@@ -43,20 +37,20 @@ let mut blinkt = Blinkt::new().unwrap();
 The example below demonstrates swapping all pixels on a Blinkt! board between red, green and blue.
 
 ```rust
-extern crate blinkt;
 
+use std::error::Error;
 use std::{thread, mem};
 use std::time::Duration;
 
 use blinkt::Blinkt;
 
-fn main() {
-    let mut blinkt = Blinkt::new().unwrap();
+fn main() -> Result<(), Box<dyn Error>> {
+    let mut blinkt = Blinkt::new()?;
     let (red, green, blue) = (&mut 255, &mut 0, &mut 0);
 
     loop {
         blinkt.set_all_pixels(*red, *green, *blue);
-        blinkt.show().unwrap();
+        blinkt.show()?;
 
         thread::sleep(Duration::from_millis(250));
 
