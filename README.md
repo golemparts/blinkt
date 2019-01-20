@@ -11,6 +11,10 @@ For bitbanging mode, Blinkt gains access to the BCM283x GPIO peripheral either t
 
 Both the original APA102 and the SK9822 clone are supported. The RGB LED/driver ICs are referred to as pixels throughout the code and documentation.
 
+Backwards compatibility for minor revisions isn't guaranteed until the library reaches v1.0.0.
+
+Blinkt is currently under active development on the [master branch](https://github.com/golemparts/blinkt/tree/master) of the repository on GitHub. If you're looking for the `README.md` or the `examples` folder for the latest release or any of the earlier releases, visit [crates.io](https://crates.io/crates/blinkt), download an archived release from the GitHub [releases](https://github.com/golemparts/blinkt/releases) page, or clone and checkout the relevant release tag.
+
 ## Documentation
 
 Documentation for the latest release can be found at [docs.golemparts.com/blinkt](https://docs.golemparts.com/blinkt). Documentation for earlier releases is stored at [docs.rs/blinkt](https://docs.rs/blinkt).
