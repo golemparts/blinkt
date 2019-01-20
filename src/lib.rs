@@ -172,6 +172,7 @@ impl From<SpiError> for Error {
 /// Result type returned from methods that can have `blinkt::Error`s.
 pub type Result<T> = result::Result<T, Error>;
 
+// Pixel.
 #[derive(Debug, Copy, Clone)]
 pub struct Pixel {
     value: [u8; 4], // Brightness, blue, green, red
@@ -333,8 +334,10 @@ impl Blinkt {
     }
 
     /// Returns an iterator with mutable references for all `Pixel`s.
-    pub fn iter_mut(&mut self) -> IterMut {
-        IterMut { iter_mut: self.pixels.iter_mut() }
+    pub fn iter_mut(&mut self) -> IterMut<'_> {
+        IterMut {
+            iter_mut: self.pixels.iter_mut(),
+        }
     }
 
     /// Sets the red, green and blue values for a single pixel in the local
@@ -428,14 +431,21 @@ impl Blinkt {
         Ok(())
     }
 
-    /// When enabled, clears all pixels when the `Blinkt` goes out of scope.
+    /// Returns the value of `clear_on_drop`.
+    pub fn clear_on_drop(&self) -> bool {
+        self.clear_on_drop
+    }
+
+    /// When enabled, clears all pixels when `Blinkt` goes out of scope.
     ///
-    /// Drop methods aren't called when a program is abnormally terminated,
-    /// for instance when a user presses Ctrl-C, and the SIGINT signal isn't
-    /// caught. You'll either have to catch those using crates such as
-    /// `simple_signal`, or manually call `cleanup()`.
+    /// By default, this is set to `true`.
     ///
-    /// Enabled by default.
+    /// ## Note
+    ///
+    /// Drop methods aren't called when a process is abnormally terminated,
+    /// for instance when a user presses <kbd>Ctrl</kbd> + <kbd>C</kbd>, and
+    /// the `SIGINT` signal isn't caught. You'll either have to catch those
+    /// using crates such as `simple_signal`, or manually call `cleanup()`.
     pub fn set_clear_on_drop(&mut self, clear_on_drop: bool) {
         self.clear_on_drop = clear_on_drop;
     }
@@ -461,6 +471,7 @@ impl Drop for Blinkt {
     }
 }
 
+/// A mutable iterator over the pixels of `Blinkt`.
 pub struct IterMut<'a> {
     iter_mut: slice::IterMut<'a, Pixel>,
 }
