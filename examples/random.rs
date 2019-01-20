@@ -18,6 +18,13 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+// random.rs - Sets each pixel on a Blinkt! board to a random RGB value in a loop.
+//
+// Interrupting the process by pressing Ctrl-C causes the application to exit
+// immediately without clearing the pixels. Check out the solid_signals.rs
+// example to learn how to properly handle incoming signals to prevent an
+// abnormal termination.
+
 use std::error::Error;
 use std::thread;
 use std::time::Duration;

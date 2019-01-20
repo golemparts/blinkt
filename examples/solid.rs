@@ -18,6 +18,14 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+// solid.rs - Swaps all pixels on a Blinkt! board between red, green and blue
+// in a loop.
+//
+// Interrupting the process by pressing Ctrl-C causes the application to exit
+// immediately without clearing the pixels. Check out the solid_signals.rs
+// example to learn how to properly handle incoming signals to prevent an
+// abnormal termination.
+
 use std::error::Error;
 use std::time::Duration;
 use std::{mem, thread};
