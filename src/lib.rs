@@ -110,6 +110,7 @@ use std::error;
 use std::fmt;
 use std::io;
 use std::result;
+use std::slice;
 
 use rppal::gpio::{Gpio, OutputPin};
 use rppal::spi;
@@ -172,22 +173,22 @@ impl From<SpiError> for Error {
 pub type Result<T> = result::Result<T, Error>;
 
 #[derive(Debug, Copy, Clone)]
-struct Pixel {
+pub struct Pixel {
     value: [u8; 4], // Brightness, blue, green, red
 }
 
 impl Pixel {
-    fn set_rgb(&mut self, red: u8, green: u8, blue: u8) {
+    pub fn set_rgb(&mut self, red: u8, green: u8, blue: u8) {
         self.value[1] = blue;
         self.value[2] = green;
         self.value[3] = red;
     }
 
-    fn set_brightness(&mut self, brightness: f32) {
+    pub fn set_brightness(&mut self, brightness: f32) {
         self.value[0] = 0b1110_0000 | ((31.0 * brightness.max(0.0).min(1.0)) as u8);
     }
 
-    fn set_rgbb(&mut self, red: u8, green: u8, blue: u8, brightness: f32) {
+    pub fn set_rgbb(&mut self, red: u8, green: u8, blue: u8, brightness: f32) {
         self.set_rgb(red, green, blue);
         self.set_brightness(brightness);
     }
@@ -331,30 +332,9 @@ impl Blinkt {
         })
     }
 
-    /// When enabled, clears all pixels when the `Blinkt` goes out of scope.
-    ///
-    /// Drop methods aren't called when a program is abnormally terminated,
-    /// for instance when a user presses Ctrl-C, and the SIGINT signal isn't
-    /// caught. You'll either have to catch those using crates such as
-    /// `simple_signal`, or manually call `cleanup()`.
-    ///
-    /// Enabled by default.
-    pub fn set_clear_on_drop(&mut self, clear_on_drop: bool) {
-        self.clear_on_drop = clear_on_drop;
-    }
-
-    /// Changes the GPIO pin mode for the data and clock pins back to their
-    /// original state, and optionally clears all pixels.
-    ///
-    /// Normally, this method is automatically called when Blinkt goes out of
-    /// scope, but you can manually call it to handle early/abnormal termination.
-    pub fn cleanup(&mut self) -> Result<()> {
-        if self.clear_on_drop {
-            self.clear();
-            self.show()?;
-        }
-
-        Ok(())
+    /// Returns an iterator with mutable references for all `Pixel`s.
+    pub fn iter_mut(&mut self) -> IterMut {
+        IterMut { iter_mut: self.pixels.iter_mut() }
     }
 
     /// Sets the red, green and blue values for a single pixel in the local
@@ -447,11 +427,57 @@ impl Blinkt {
 
         Ok(())
     }
+
+    /// When enabled, clears all pixels when the `Blinkt` goes out of scope.
+    ///
+    /// Drop methods aren't called when a program is abnormally terminated,
+    /// for instance when a user presses Ctrl-C, and the SIGINT signal isn't
+    /// caught. You'll either have to catch those using crates such as
+    /// `simple_signal`, or manually call `cleanup()`.
+    ///
+    /// Enabled by default.
+    pub fn set_clear_on_drop(&mut self, clear_on_drop: bool) {
+        self.clear_on_drop = clear_on_drop;
+    }
+
+    /// Changes the GPIO pin mode for the data and clock pins back to their
+    /// original state, and optionally clears all pixels.
+    ///
+    /// Normally, this method is automatically called when Blinkt goes out of
+    /// scope, but you can manually call it to handle early/abnormal termination.
+    pub fn cleanup(&mut self) -> Result<()> {
+        if self.clear_on_drop {
+            self.clear();
+            self.show()?;
+        }
+
+        Ok(())
+    }
 }
 
 impl Drop for Blinkt {
     fn drop(&mut self) {
         self.cleanup().unwrap_or(());
+    }
+}
+
+pub struct IterMut<'a> {
+    iter_mut: slice::IterMut<'a, Pixel>,
+}
+
+impl<'a> Iterator for IterMut<'a> {
+    type Item = &'a mut Pixel;
+    fn next(&mut self) -> Option<&'a mut Pixel> {
+        self.iter_mut.next()
+    }
+}
+
+impl<'a> IntoIterator for &'a mut Blinkt {
+    type Item = &'a mut Pixel;
+    type IntoIter = IterMut<'a>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.iter_mut()
     }
 }
 
