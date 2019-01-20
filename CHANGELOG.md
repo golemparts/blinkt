@@ -1,7 +1,9 @@
 # Changelog
 
-## 0.5.1 (TBD)
+## 0.6.0 (TBD)
 
+* (Breaking change) Transition to Rust 2018, requiring rustc v1.31.0 or newer to compile the library.
+* Add new badge to `README.md`, indicating the required minimum rustc version.
 * Upgrade RPPAL dependency to 0.10.0.
 * Remove quick-error dependency.
 
