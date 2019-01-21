@@ -50,20 +50,19 @@
 //! and blue.
 //!
 //! ```rust,no_run
-//! extern crate blinkt;
-//!
-//! use std::{thread, mem};
+//! use std::error::Error;
 //! use std::time::Duration;
+//! use std::{thread, mem};
 //!
 //! use blinkt::Blinkt;
 //!
-//! fn main() {
-//!     let mut blinkt = Blinkt::new().unwrap();
+//! fn main() -> Result<(), Box<dyn Error>> {
+//!     let mut blinkt = Blinkt::new()?;
 //!     let (red, green, blue) = (&mut 255, &mut 0, &mut 0);
 //!
 //!     loop {
 //!         blinkt.set_all_pixels(*red, *green, *blue);
-//!         blinkt.show().unwrap();
+//!         blinkt.show()?;
 //!
 //!         thread::sleep(Duration::from_millis(250));
 //!
@@ -80,12 +79,13 @@
 //! (physical pin 19), and clock on GPIO 11 (physical pin 23).
 //!
 //! ```rust,no_run
-//! # extern crate blinkt;
+//! # use std::error::Error;
 //! #
 //! # use blinkt::Blinkt;
 //! #
-//! # fn main() {
-//! let mut blinkt = Blinkt::with_spi(16_000_000, 144).unwrap();
+//! # fn main() -> Result<(), Box<dyn Error>> {
+//! let mut blinkt = Blinkt::with_spi(16_000_000, 144)?;
+//! # Ok(())
 //! # }
 //! ```
 //!
@@ -94,15 +94,55 @@
 //! than using the hardware SPI interface, and may cause issues on longer strips.
 //!
 //! ```rust,no_run
-//! # extern crate blinkt;
+//! # use std::error::Error;
 //! #
 //! # use blinkt::Blinkt;
 //! #
-//! # fn main() {
-//! let mut blinkt = Blinkt::with_settings(23, 24, 8).unwrap();
+//! # fn main() -> Result<(), Box<dyn Error>> {
+//! let mut blinkt = Blinkt::with_settings(23, 24, 8)?;
+//! # Ok(())
 //! # }
 //! ```
-
+//!
+//! ### Iterators
+//!
+//! Besides the various `set_` methods available on `Blinkt`, pixels can also be accessed
+//! and modified through an iterator. `Blinkt::iter_mut()` returns a mutable iterator over
+//! all `Pixel`s stored in `Blinkt`.
+//!
+//! ```rust,no_run
+//! # use std::error::Error;
+//! #
+//! # use blinkt::Blinkt;
+//! #
+//! # fn main() -> Result<(), Box<dyn Error>> {
+//! #     let mut blinkt = Blinkt::new()?;
+//! #
+//! blinkt.iter_mut().for_each(|pixel| {
+//!     pixel.set_rgb(255, 0, 255);
+//! });
+//! #    Ok(())
+//! # }
+//! ```
+//!
+//! For more idiomatic `for` loops, you can access the same iterator
+//! through a mutable reference of a `Blinkt` instance.
+//!
+//! ```rust,no_run
+//! # use std::error::Error;
+//! #
+//! # use blinkt::Blinkt;
+//! #
+//! # fn main() -> Result<(), Box<dyn Error>> {
+//! #     let mut blinkt = Blinkt::new()?;
+//! #
+//! for pixel in &mut blinkt {
+//!     pixel.set_rgb(255, 255, 0);
+//! }
+//! #    Ok(())
+//! # }
+//! ```
+//!
 // Used by rustdoc to link other crates to blinkt's docs
 #![doc(html_root_url = "https://docs.rs/blinkt/0.5.0")]
 
@@ -172,7 +212,7 @@ impl From<SpiError> for Error {
 /// Result type returned from methods that can have `blinkt::Error`s.
 pub type Result<T> = result::Result<T, Error>;
 
-// Pixel.
+/// A pixel on an LED strip or board.
 #[derive(Debug, Copy, Clone)]
 pub struct Pixel {
     value: [u8; 4], // Brightness, blue, green, red
@@ -333,7 +373,7 @@ impl Blinkt {
         })
     }
 
-    /// Returns a mutable iterator over the `Pixel`s contained in `Blinkt`.
+    /// Returns a mutable iterator over all `Pixel`s stored in `Blinkt`.
     pub fn iter_mut(&mut self) -> IterMut<'_> {
         IterMut {
             iter_mut: self.pixels.iter_mut(),
@@ -464,7 +504,7 @@ impl Drop for Blinkt {
     }
 }
 
-/// A mutable iterator over the `Pixel`s contained in `Blinkt`.
+/// A mutable iterator over all `Pixel`s stored in `Blinkt`.
 pub struct IterMut<'a> {
     iter_mut: slice::IterMut<'a, Pixel>,
 }

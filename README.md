@@ -17,7 +17,11 @@ Blinkt is currently under active development on the [master branch](https://gith
 
 ## Documentation
 
-Documentation for the latest release can be found at [docs.golemparts.com/blinkt](https://docs.golemparts.com/blinkt). Documentation for earlier releases is stored at [docs.rs/blinkt](https://docs.rs/blinkt).
+Online documentation is available for the latest release, older releases, and the version currently in development.
+
+* Latest release: [docs.golemparts.com/blinkt](https://docs.golemparts.com/blinkt)
+* Older releases: [docs.rs/blinkt](https://docs.rs/blinkt)
+* In development: [docs.golemparts.com/blinkt-dev](https://docs.golemparts.com/blinkt-dev)
 
 ## Usage
 
@@ -41,10 +45,9 @@ let mut blinkt = Blinkt::new()?;
 The example below demonstrates swapping all pixels on a Blinkt! board between red, green and blue.
 
 ```rust
-
 use std::error::Error;
-use std::{thread, mem};
 use std::time::Duration;
+use std::{mem, thread};
 
 use blinkt::Blinkt;
 
@@ -64,7 +67,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 }
 ```
 
-To control an LED strip, consisting of 144 pixels, connected to the Raspberry Pi's hardware SPI pins (data on GPIO 10 (physical pin 19), and clock on GPIO 11 (physical pin 23)), at 16MHz clock speed, replace the Blinkt::new() line in the above example with the following. You may have to tweak the maximum clock speed based on the number of pixels and wire quality.
+To control an LED strip consisting of 144 pixels, connected to the Raspberry Pi's hardware SPI pins (data on GPIO 10 (physical pin 19), and clock on GPIO 11 (physical pin 23)), at 16 MHz clock speed, replace the `Blinkt::new()` line in the above example with the following. You may have to tweak the maximum clock speed based on the number of pixels and the wire quality.
 
 ```rust
 let mut blinkt = Blinkt::with_spi(16_000_000, 144)?;
