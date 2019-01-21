@@ -8,9 +8,9 @@
 * Remove quick-error dependency.
 * Add `Pixel` to public interface, representing a pixel on an LED strip/board.
 * Add `IterMut`, which implements `Iterator` for a `&mut Pixel` slice.
+* Implement `IntoIterator` for `&mut Blinkt`, which returns an `IterMut` mutable iterator over all `Pixel`s contained in `Blinkt`.
 * Add `Blinkt::iter_mut()`, which returns an `IterMut` mutable iterator over all `Pixel`s contained in `Blinkt`.
-* Implement `IntoIterator` for `&mut Blinkt`.
-* Add `Blinkt::clear_on_drop()` to return the current value of `clear_on_drop`.
+* Add `Blinkt::clear_on_drop()`, which returns the current value of `clear_on_drop`.
 * (Breaking change) Remove `Blinkt::cleanup()`. When `Blinkt` goes out of scope, any changed pin states are automatically reset. If `clear_on_drop` is set to `true`, all pixels will also be cleared.
 
 ## 0.5.0 (November 16, 2018)
