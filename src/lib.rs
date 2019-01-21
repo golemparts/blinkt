@@ -39,8 +39,8 @@
 //!
 //! By default, all pixels are cleared when Blinkt goes out of
 //! scope. Use `set_clear_on_drop(false)` to disable this behavior. Note that
-//! drop methods aren't called when a program is abnormally terminated (for
-//! instance when a SIGINT isn't caught).
+//! `drop` methods aren't called when a process is abnormally terminated (for
+//! instance when a `SIGINT` isn't caught).
 //!
 //! # Examples
 //!
@@ -158,12 +158,14 @@ use rppal::spi;
 pub use rppal::gpio::Error as GpioError;
 pub use rppal::spi::Error as SpiError;
 
+mod pixel;
+
+pub use pixel::Pixel;
+
 // Default values for the Pimoroni Blinkt! board using BCM GPIO pin numbers
 const DAT: u8 = 23;
 const CLK: u8 = 24;
 const NUM_PIXELS: usize = 8;
-
-const DEFAULT_BRIGHTNESS: u8 = 7;
 
 #[derive(Debug)]
 /// Errors that can occur while using Blinkt.
@@ -211,41 +213,6 @@ impl From<SpiError> for Error {
 
 /// Result type returned from methods that can have `blinkt::Error`s.
 pub type Result<T> = result::Result<T, Error>;
-
-/// A pixel on an LED strip or board.
-#[derive(Debug, Copy, Clone)]
-pub struct Pixel {
-    value: [u8; 4], // Brightness, blue, green, red
-}
-
-impl Pixel {
-    pub fn set_rgb(&mut self, red: u8, green: u8, blue: u8) {
-        self.value[1] = blue;
-        self.value[2] = green;
-        self.value[3] = red;
-    }
-
-    pub fn set_brightness(&mut self, brightness: f32) {
-        self.value[0] = 0b1110_0000 | ((31.0 * brightness.max(0.0).min(1.0)) as u8);
-    }
-
-    pub fn set_rgbb(&mut self, red: u8, green: u8, blue: u8, brightness: f32) {
-        self.set_rgb(red, green, blue);
-        self.set_brightness(brightness);
-    }
-
-    fn bytes(&self) -> &[u8] {
-        &self.value
-    }
-}
-
-impl Default for Pixel {
-    fn default() -> Pixel {
-        Pixel {
-            value: [0b1110_0000 | DEFAULT_BRIGHTNESS, 0, 0, 0],
-        }
-    }
-}
 
 trait SerialOutput {
     fn write(&mut self, data: &[u8]) -> Result<()>;
