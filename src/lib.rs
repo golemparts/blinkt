@@ -333,7 +333,7 @@ impl Blinkt {
         })
     }
 
-    /// Returns an iterator with mutable references for all `Pixel`s.
+    /// Returns a mutable iterator over the `Pixel`s contained in `Blinkt`.
     pub fn iter_mut(&mut self) -> IterMut<'_> {
         IterMut {
             iter_mut: self.pixels.iter_mut(),
@@ -442,42 +442,36 @@ impl Blinkt {
     ///
     /// ## Note
     ///
-    /// Drop methods aren't called when a process is abnormally terminated,
-    /// for instance when a user presses <kbd>Ctrl</kbd> + <kbd>C</kbd>, and
-    /// the `SIGINT` signal isn't caught. You'll either have to catch those
-    /// using crates such as `simple_signal`, or manually call `cleanup()`.
+    /// Drop methods aren't called when a process is abnormally terminated, for
+    /// instance when a user presses <kbd>Ctrl</kbd> + <kbd>C</kbd>, and the `SIGINT` signal
+    /// isn't caught. You can catch those using crates such as [`simple_signal`].
+    ///
+    /// [`simple_signal`]: https://crates.io/crates/simple-signal
     pub fn set_clear_on_drop(&mut self, clear_on_drop: bool) {
         self.clear_on_drop = clear_on_drop;
-    }
-
-    /// Changes the GPIO pin mode for the data and clock pins back to their
-    /// original state, and optionally clears all pixels.
-    ///
-    /// Normally, this method is automatically called when Blinkt goes out of
-    /// scope, but you can manually call it to handle early/abnormal termination.
-    pub fn cleanup(&mut self) -> Result<()> {
-        if self.clear_on_drop {
-            self.clear();
-            self.show()?;
-        }
-
-        Ok(())
     }
 }
 
 impl Drop for Blinkt {
+    /// Clears all pixels if [`clear_on_drop`] is set to `true` (default).
+    ///
+    /// [`clear_on_drop`]: #method.clear_on_drop
     fn drop(&mut self) {
-        self.cleanup().unwrap_or(());
+        if self.clear_on_drop {
+            self.clear();
+            let _ = self.show();
+        }
     }
 }
 
-/// A mutable iterator over the pixels of `Blinkt`.
+/// A mutable iterator over the `Pixel`s contained in `Blinkt`.
 pub struct IterMut<'a> {
     iter_mut: slice::IterMut<'a, Pixel>,
 }
 
 impl<'a> Iterator for IterMut<'a> {
     type Item = &'a mut Pixel;
+
     fn next(&mut self) -> Option<&'a mut Pixel> {
         self.iter_mut.next()
     }
