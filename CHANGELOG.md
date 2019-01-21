@@ -4,19 +4,19 @@
 
 * (Breaking change) Transition to Rust 2018, requiring rustc v1.31.0 or newer to compile the library.
 * Add new badge to `README.md`, indicating the required minimum rustc version.
-* Upgrade RPPAL dependency to 0.10.0.
-* Remove quick-error dependency.
-* Add `Pixel` to public interface, representing a pixel on an LED strip/board.
+* Upgrade `rppal` dependency to 0.10.0.
+* Remove `quick-error` dependency.
+* Add `Pixel` to public interface, representing a pixel on an LED strip or board.
 * Add `IterMut`, which implements `Iterator` for a `&mut Pixel` slice.
-* Implement `IntoIterator` for `&mut Blinkt`, which returns an `IterMut` mutable iterator over all `Pixel`s contained in `Blinkt`.
-* Add `Blinkt::iter_mut()`, which returns an `IterMut` mutable iterator over all `Pixel`s contained in `Blinkt`.
+* Implement `IntoIterator` for `&mut Blinkt`, which returns an `IterMut` mutable iterator over all `Pixel`s stored in `Blinkt`.
+* Add `Blinkt::iter_mut()`, which returns an `IterMut` mutable iterator over all `Pixel`s stored in `Blinkt`.
 * Add `Blinkt::clear_on_drop()`, which returns the current value of `clear_on_drop`.
 * (Breaking change) Remove `Blinkt::cleanup()`. When `Blinkt` goes out of scope, any changed pin states are automatically reset. If `clear_on_drop` is set to `true`, all pixels will also be cleared.
 
 ## 0.5.0 (November 16, 2018)
 
 * Add support for Raspberry Pi 3 A+.
-* Replace `spidev` dependency with RPPAL's SPI module.
+* Replace `spidev` dependency with `rppal`'s SPI module.
 * (Breaking change) Add `Error::Spi` to indicate an SPI error occurred.
 
 ## 0.4.0 (April 21, 2018)
@@ -32,7 +32,7 @@
 
 ## 0.2.0 (October 6, 2017)
 
-* Update internal struct/enum names for RPPAL 0.2.0 upgrade.
+* Update internal struct/enum names for `rppal` 0.2.0 upgrade.
 * (Breaking change) Rename `GPIOError` to `GpioError`, and `Error::GPIO` to `Error::Gpio`.
 
 ## 0.1.2 (March 1, 2017)
