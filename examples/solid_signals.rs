@@ -36,13 +36,14 @@ use blinkt::Blinkt;
 fn main() -> Result<(), Box<dyn Error>> {
     let mut blinkt = Blinkt::new()?;
 
-    // Clone running, so we can safely access it from within the signal handler.
     let running = Arc::new(AtomicBool::new(true));
-    let r = running.clone();
 
     // When a SIGINT (Ctrl-C) or SIGTERM signal is caught, atomically set running to false.
-    simple_signal::set_handler(&[Signal::Int, Signal::Term], move |_| {
-        r.store(false, Ordering::SeqCst);
+    simple_signal::set_handler(&[Signal::Int, Signal::Term], {
+        let running = running.clone();
+        move |_| {
+            running.store(false, Ordering::SeqCst);
+        }
     });
 
     let (red, green, blue) = (&mut 255, &mut 0, &mut 0);
