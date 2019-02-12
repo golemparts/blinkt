@@ -145,6 +145,7 @@
 //!
 // Used by rustdoc to link other crates to blinkt's docs
 #![doc(html_root_url = "https://docs.rs/blinkt/0.5.0")]
+#![allow(clippy::trivially_copy_pass_by_ref)]
 
 use std::error;
 use std::fmt;
@@ -298,7 +299,7 @@ pub struct Blinkt {
 }
 
 impl Blinkt {
-    /// Creates a new `Blinkt` using the default settings for a Pimoroni
+    /// Constructs a new `Blinkt` using the default settings for a Pimoroni
     /// Blinkt! board.
     ///
     /// This sets the data pin to GPIO 23 (physical pin 16), the clock pin to
@@ -307,7 +308,7 @@ impl Blinkt {
         Blinkt::with_settings(DAT, CLK, NUM_PIXELS)
     }
 
-    /// Creates a new `Blinkt` using bitbanging mode, with custom settings for
+    /// Constructs a new `Blinkt` using bitbanging mode, with custom settings for
     /// the data pin, clock pin, and number of pixels. Pins should be specified
     /// by their BCM GPIO pin numbers.
     pub fn with_settings(pin_data: u8, pin_clock: u8, num_pixels: usize) -> Result<Blinkt> {
@@ -319,16 +320,16 @@ impl Blinkt {
         })
     }
 
-    /// Creates a new `Blinkt` using hardware SPI, with custom settings for the
+    /// Constructs a new `Blinkt` using hardware SPI, with custom settings for the
     /// clock speed and number of pixels.
     ///
     /// This sets the data pin to GPIO 10 (physical pin 19) and the clock pin
     /// to GPIO 11 (physical pin 23).
     ///
-    /// The Raspberry Pi allows SPI clock speeds up to 125MHz (125_000_000),
+    /// The Raspberry Pi allows SPI clock speeds up to 125 MHz (125_000_000),
     /// but the maximum speed supported by LED strips depends a lot on the
     /// number of pixels and wire quality, and requires some experimentation.
-    /// 32MHz (32_000_000) seems to be the maximum clock speed for a typical
+    /// 32 MHz (32_000_000) seems to be the maximum clock speed for a typical
     /// short LED strip. Visit the [Raspberry Pi SPI Documentation](https://www.raspberrypi.org/documentation/hardware/raspberrypi/spi/)
     /// page for a complete list of supported clock speeds.
     pub fn with_spi(clock_speed_hz: u32, num_pixels: usize) -> Result<Blinkt> {
@@ -350,8 +351,8 @@ impl Blinkt {
     /// Sets the red, green and blue values for a single pixel in the local
     /// buffer.
     ///
-    /// For an 8-pixel board, valid values for pixel are 0-7. Valid values
-    /// for red, green and blue are 0-255.
+    /// For an 8-pixel board, valid values for `pixel` are 0-7. Valid values
+    /// for `red`, `green` and `blue` are 0-255.
     pub fn set_pixel(&mut self, pixel: usize, red: u8, green: u8, blue: u8) {
         if let Some(pixel) = self.pixels.get_mut(pixel) {
             pixel.set_rgb(red, green, blue);
@@ -361,8 +362,8 @@ impl Blinkt {
     /// Sets the red, green, blue and brightness values for a single pixel in
     /// the local buffer.
     ///
-    /// For an 8-pixel board, valid values for pixel are 0-7. Valid
-    /// values for red, green and blue are 0-255. Valid values for brightness
+    /// For an 8-pixel board, valid values for `pixel` are 0-7. Valid
+    /// values for `red`, `green` and `blue` are 0-255. Valid values for `brightness`
     /// are 0.0-1.0, which is converted to a 5-bit value.
     pub fn set_pixel_rgbb(&mut self, pixel: usize, red: u8, green: u8, blue: u8, brightness: f32) {
         if let Some(pixel) = self.pixels.get_mut(pixel) {
@@ -372,8 +373,8 @@ impl Blinkt {
 
     /// Sets the brightness value for a single pixel in the local buffer.
     ///
-    /// For an 8-pixel board, valid values for pixel are 0-7. Valid
-    /// values for brightness are 0.0-1.0, which is converted to a
+    /// For an 8-pixel board, valid values for `pixel` are 0-7. Valid
+    /// values for `brightness` are 0.0-1.0, which is converted to a
     /// 5-bit value.
     pub fn set_pixel_brightness(&mut self, pixel: usize, brightness: f32) {
         if let Some(pixel) = self.pixels.get_mut(pixel) {
@@ -383,7 +384,7 @@ impl Blinkt {
 
     /// Sets the red, green and blue values for all pixels in the local buffer.
     ///
-    /// Valid values for red, green and blue are 0-255.
+    /// Valid values for `red`, `green` and `blue` are 0-255.
     pub fn set_all_pixels(&mut self, red: u8, green: u8, blue: u8) {
         for pixel in &mut self.pixels {
             pixel.set_rgb(red, green, blue);
@@ -393,17 +394,17 @@ impl Blinkt {
     /// Sets the red, green, blue and brightness values for all pixels in the
     /// local buffer.
     ///
-    /// Valid values for red, green and blue are 0-255. Valid values for
-    /// brightness are 0.0-1.0, which is converted to a 5-bit value.
+    /// Valid values for `red`, `green` and `blue` are 0-255. Valid values for
+    /// `brightness` are 0.0-1.0, which is converted to a 5-bit value.
     pub fn set_all_pixels_rgbb(&mut self, red: u8, green: u8, blue: u8, brightness: f32) {
         for pixel in &mut self.pixels {
             pixel.set_rgbb(red, green, blue, brightness);
         }
     }
 
-    /// Sets the brightness value for all pixels in the local buffer.
+    /// Sets the brightness value for all pixels.
     ///
-    /// Valid values for brightness are 0.0-1.0, which is converted to a 5-bit
+    /// Valid values for `brightness` are 0.0-1.0, which is converted to a 5-bit
     /// value.
     pub fn set_all_pixels_brightness(&mut self, brightness: f32) {
         for pixel in &mut self.pixels {
@@ -411,8 +412,7 @@ impl Blinkt {
         }
     }
 
-    /// Sets the red, green and blue values to 0 for all pixels in the local
-    /// buffer.
+    /// Sets the red, green and blue values for all pixels to `0`.
     pub fn clear(&mut self) {
         self.set_all_pixels(0, 0, 0);
     }
