@@ -12,6 +12,7 @@
 * Add `Blinkt::iter_mut()`, which returns an `IterMut` mutable iterator over all `Pixel`s stored in `Blinkt`.
 * Add `Blinkt::clear_on_drop()`, which returns the current value of `clear_on_drop`.
 * (Breaking change) Remove `Blinkt::cleanup()`. When `Blinkt` goes out of scope, any changed pin states are automatically reset. If `clear_on_drop` is set to `true`, all pixels will also be cleared.
+* Implement `Send` for `Blinkt`.
 
 ## 0.5.0 (November 16, 2018)
 
