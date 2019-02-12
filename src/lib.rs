@@ -351,8 +351,8 @@ impl Blinkt {
     /// Sets the red, green and blue values for a single pixel in the local
     /// buffer.
     ///
-    /// For an 8-pixel board, valid values for `pixel` are 0-7. Valid values
-    /// for `red`, `green` and `blue` are 0-255.
+    /// Pixels are numbered starting at `0`.
+    /// `red`, `green` and `blue` are specified as 8-bit values between `0` (0%) and `255` (100%).
     pub fn set_pixel(&mut self, pixel: usize, red: u8, green: u8, blue: u8) {
         if let Some(pixel) = self.pixels.get_mut(pixel) {
             pixel.set_rgb(red, green, blue);
@@ -362,9 +362,9 @@ impl Blinkt {
     /// Sets the red, green, blue and brightness values for a single pixel in
     /// the local buffer.
     ///
-    /// For an 8-pixel board, valid values for `pixel` are 0-7. Valid
-    /// values for `red`, `green` and `blue` are 0-255. Valid values for `brightness`
-    /// are 0.0-1.0, which is converted to a 5-bit value.
+    /// Pixels are numbered starting at `0`.
+    /// `red`, `green` and `blue` are specified as 8-bit values between `0` (0%) and `255` (100%).
+    /// `brightness` is specified as a floating point value between `0.0` (0%) and `1.0` (100%), and is converted to a 5-bit value.
     pub fn set_pixel_rgbb(&mut self, pixel: usize, red: u8, green: u8, blue: u8, brightness: f32) {
         if let Some(pixel) = self.pixels.get_mut(pixel) {
             pixel.set_rgbb(red, green, blue, brightness);
@@ -373,9 +373,8 @@ impl Blinkt {
 
     /// Sets the brightness value for a single pixel in the local buffer.
     ///
-    /// For an 8-pixel board, valid values for `pixel` are 0-7. Valid
-    /// values for `brightness` are 0.0-1.0, which is converted to a
-    /// 5-bit value.
+    /// Pixels are numbered starting at `0`.
+    /// `brightness` is specified as a floating point value between `0.0` (0%) and `1.0` (100%), and is converted to a 5-bit value.
     pub fn set_pixel_brightness(&mut self, pixel: usize, brightness: f32) {
         if let Some(pixel) = self.pixels.get_mut(pixel) {
             pixel.set_brightness(brightness);
@@ -384,7 +383,7 @@ impl Blinkt {
 
     /// Sets the red, green and blue values for all pixels in the local buffer.
     ///
-    /// Valid values for `red`, `green` and `blue` are 0-255.
+    /// `red`, `green` and `blue` are specified as 8-bit values between `0` (0%) and `255` (100%).
     pub fn set_all_pixels(&mut self, red: u8, green: u8, blue: u8) {
         for pixel in &mut self.pixels {
             pixel.set_rgb(red, green, blue);
@@ -394,8 +393,8 @@ impl Blinkt {
     /// Sets the red, green, blue and brightness values for all pixels in the
     /// local buffer.
     ///
-    /// Valid values for `red`, `green` and `blue` are 0-255. Valid values for
-    /// `brightness` are 0.0-1.0, which is converted to a 5-bit value.
+    /// `red`, `green` and `blue` are specified as 8-bit values between `0` (0%) and `255` (100%).
+    /// `brightness` is specified as a floating point value between `0.0` (0%) and `1.0` (100%), and is converted to a 5-bit value.
     pub fn set_all_pixels_rgbb(&mut self, red: u8, green: u8, blue: u8, brightness: f32) {
         for pixel in &mut self.pixels {
             pixel.set_rgbb(red, green, blue, brightness);
@@ -404,8 +403,7 @@ impl Blinkt {
 
     /// Sets the brightness value for all pixels.
     ///
-    /// Valid values for `brightness` are 0.0-1.0, which is converted to a 5-bit
-    /// value.
+    /// `brightness` is specified as a floating point value between `0.0` (0%) and `1.0` (100%), and is converted to a 5-bit value.
     pub fn set_all_pixels_brightness(&mut self, brightness: f32) {
         for pixel in &mut self.pixels {
             pixel.set_brightness(brightness);
@@ -491,16 +489,4 @@ impl<'a> IntoIterator for &'a mut Blinkt {
     fn into_iter(self) -> Self::IntoIter {
         self.iter_mut()
     }
-}
-
-#[test]
-fn test_new() {
-    let mut blinkt = match Blinkt::new() {
-        // Errors are acceptable, since they're likely caused by outside
-        // distro/filesystem issues.
-        Err(_) => return,
-        Ok(blinkt) => blinkt,
-    };
-
-    blinkt.set_clear_on_drop(false);
 }

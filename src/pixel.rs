@@ -44,12 +44,12 @@ impl Pixel {
 
     /// Sets the values for red, green and blue.
     ///
-    /// `red`, `green` and `blue` are specified as a `u8` between `0` (0%) and `255` (100%).
+    /// `red`, `green` and `blue` are specified as 8-bit values between `0` (0%) and `255` (100%).
     #[inline]
     pub fn set_rgb(&mut self, red: u8, green: u8, blue: u8) {
-        self.value[IDX_BLUE] = blue;
-        self.value[IDX_GREEN] = green;
         self.value[IDX_RED] = red;
+        self.value[IDX_GREEN] = green;
+        self.value[IDX_BLUE] = blue;
     }
 
     /// Returns a tuple containing the values for red, green, blue and brightness.
@@ -65,8 +65,8 @@ impl Pixel {
 
     /// Sets the values for red, green, blue and brightness.
     ///
-    /// `red`, `green` and `blue` are specified as a `u8` between `0` (0%) and `255` (100%).
-    /// `brightness` is specified as an `f32` between `0.0` (0%) and `1.0` (100%), and is converted to a 5-bit value.
+    /// `red`, `green` and `blue` are specified as 8-bit values between `0` (0%) and `255` (100%).
+    /// `brightness` is specified as a floating point value between `0.0` (0%) and `1.0` (100%), and is converted to a 5-bit value.
     #[inline]
     pub fn set_rgbb(&mut self, red: u8, green: u8, blue: u8, brightness: f32) {
         self.set_rgb(red, green, blue);
@@ -81,7 +81,7 @@ impl Pixel {
 
     /// Sets the red value.
     ///
-    /// `red` is specified as a `u8` between `0` (0%) and `255` (100%).
+    /// `red` is specified as an 8-bit value between `0` (0%) and `255` (100%).
     #[inline]
     pub fn set_red(&mut self, red: u8) {
         self.value[IDX_RED] = red;
@@ -95,7 +95,7 @@ impl Pixel {
 
     /// Sets the green value.
     ///
-    /// `green` is specified as a `u8` between `0` (0%) and `255` (100%).
+    /// `green` is specified as an 8-bit value between `0` (0%) and `255` (100%).
     #[inline]
     pub fn set_green(&mut self, green: u8) {
         self.value[IDX_GREEN] = green;
@@ -109,7 +109,7 @@ impl Pixel {
 
     /// Sets the blue value.
     ///
-    /// `blue` is specified as a `u8` between `0` (0%) and `255` (100%).
+    /// `blue` is specified as an 8-bit value between `0` (0%) and `255` (100%).
     #[inline]
     pub fn set_blue(&mut self, blue: u8) {
         self.value[IDX_BLUE] = blue;
@@ -123,7 +123,7 @@ impl Pixel {
 
     /// Sets the brightness value.
     ///
-    /// `brightness` is specified as an `f32` between `0.0` (0%) and `1.0` (100%), and is converted to a 5-bit value.
+    /// `brightness` is specified as a floating point value between `0.0` (0%) and `1.0` (100%), and is converted to a 5-bit value.
     #[inline]
     pub fn set_brightness(&mut self, brightness: f32) {
         self.value[IDX_BRIGHTNESS] = 0b1110_0000 | ((31.0 * brightness.max(0.0).min(1.0)) as u8);
