@@ -4,7 +4,7 @@
 
 * (Breaking change) Transition to Rust 2018, requiring rustc v1.31.0 or newer to compile the library.
 * Add new badge to `README.md`, indicating the required minimum rustc version.
-* Upgrade `rppal` dependency to 0.10.0.
+* Upgrade `rppal` dependency to 0.11.
 * Remove `quick-error` dependency.
 * Add `Pixel` to public interface, representing a pixel on an LED strip or board.
 * Add `IterMut`, which implements `Iterator` for a `&mut Pixel` slice.
