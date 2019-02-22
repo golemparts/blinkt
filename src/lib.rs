@@ -144,7 +144,7 @@
 //! ```
 //!
 // Used by rustdoc to link other crates to blinkt's docs
-#![doc(html_root_url = "https://docs.rs/blinkt/0.5.0")]
+#![doc(html_root_url = "https://docs.rs/blinkt/0.6.0")]
 #![allow(clippy::trivially_copy_pass_by_ref)]
 
 use std::error;
