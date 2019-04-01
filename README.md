@@ -1,6 +1,6 @@
 # Blinkt
 
-[![Build Status](https://travis-ci.org/golemparts/blinkt.svg?branch=master)](https://travis-ci.org/golemparts/blinkt)
+[![Build Status](https://travis-ci.com/golemparts/blinkt.svg?branch=master)](https://travis-ci.com/golemparts/blinkt)
 [![crates.io](https://meritbadge.herokuapp.com/blinkt)](https://crates.io/crates/blinkt)
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Minimum rustc version](https://img.shields.io/badge/rustc-v1.31.0-lightgray.svg)](https://blog.rust-lang.org/2018/12/06/Rust-1.31-and-rust-2018.html)
