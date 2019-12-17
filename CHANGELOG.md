@@ -5,7 +5,7 @@
 * (Breaking change) Transition to Rust 2018, requiring rustc v1.31.0 or newer to compile the library.
 * Add new badge to `README.md`, indicating the required minimum rustc version.
 * Upgrade `rppal` dependency to 0.11.
-* Add support for Raspberry Pi Compute Module 3+.
+* Add support for Raspberry Pi Compute Module 3+ and Raspberry Pi 4 B.
 * Remove `quick-error` dependency.
 * Add `Pixel` to public interface, which represents a pixel on an LED strip or board.
 * Add `IterMut`, which implements `Iterator` for a `&mut Pixel` slice.
