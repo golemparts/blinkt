@@ -112,4 +112,4 @@ In the root directory of your project, create a `.vscode` subdirectory, and then
 
 ## Copyright and license
 
-Copyright (c) 2016-2019 Rene van der Meer. Released under the [MIT license](LICENSE).
+Copyright (c) 2016-2021 Rene van der Meer. Released under the [MIT license](LICENSE).
