@@ -2,7 +2,7 @@
 
 ## 0.6.0 (TBD)
 
-* (Breaking change) Transition to Rust 2018, requiring rustc v1.31.0 or newer to compile the library.
+* (Breaking change) Transition to Rust 2018, requiring rustc v1.45.0 or newer to compile the library.
 * Add new badge to `README.md`, indicating the required minimum rustc version.
 * Upgrade `rppal` dependency to 0.12.0.
 * Add support for Raspberry Pi CM3+, CM4, 4B, 400.
