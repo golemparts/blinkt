@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.com/golemparts/blinkt.svg?branch=master)](https://travis-ci.com/golemparts/blinkt)
 [![crates.io](https://meritbadge.herokuapp.com/blinkt)](https://crates.io/crates/blinkt)
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Minimum rustc version](https://img.shields.io/badge/rustc-v1.31.0-lightgray.svg)](https://blog.rust-lang.org/2018/12/06/Rust-1.31-and-rust-2018.html)
+[![Minimum rustc version](https://img.shields.io/badge/rustc-v1.40.0-lightgray.svg)](https://blog.rust-lang.org/2019/12/19/Rust-1.40.0.html)
 
 Blinkt is a Rust library that provides an interface for the Pimoroni Blinkt!, and any similar APA102 or SK9822 LED strips or boards, on a Raspberry Pi. The library supports bitbanging mode on any GPIO pins, and hardware SPI mode on GPIO 10 (physical pin 19) for data, and GPIO 11 (physical pin 23) for clock.
 
@@ -29,7 +29,7 @@ Add a dependency for `blinkt` to your `Cargo.toml`.
 
 ```toml
 [dependencies]
-blinkt = "0.6"
+blinkt = "0.6.0"
 ```
 
 Call `Blinkt::new()` to create a new Blinkt with the default settings. Alternative configuration options are available through `Blinkt::with_settings()` and `Blinkt::with_spi()`.
