@@ -16,4 +16,5 @@ env:
   - TARGET=armv7-unknown-linux-gnueabihf
 matrix:
   allow_failures:
+  - rust: beta
   - rust: nightly
