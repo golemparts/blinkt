@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.6.0 (TBD)
+## 0.6.0 (May 12, 2021)
 
 * (Breaking change) Transition to Rust 2018, requiring rustc v1.45.0 or newer to compile the library.
 * Add new badge to `README.md`, indicating the required minimum rustc version.
