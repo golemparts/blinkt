@@ -2,6 +2,7 @@
 
 ## 0.7.0 (TBD)
 
+* (Breaking change) Transition to Rust 2021, requiring rustc v1.56.0 or newer to compile the library.
 * Upgrade `rppal` dependency to 0.13.1.
 
 ## 0.6.0 (May 12, 2021)
