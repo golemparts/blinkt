@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.0 (TBD)
+
+* Upgrade `rppal` dependency to 0.13.1.
+
 ## 0.6.0 (May 12, 2021)
 
 * (Breaking change) Transition to Rust 2018, requiring rustc v1.45.0 or newer to compile the library.
