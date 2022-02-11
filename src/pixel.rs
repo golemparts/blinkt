@@ -142,8 +142,8 @@ impl Pixel {
 }
 
 impl Default for Pixel {
-    fn default() -> Pixel {
-        Pixel {
+    fn default() -> Self {
+        Self {
             value: [0b1110_0000 | DEFAULT_BRIGHTNESS, 0, 0, 0],
         }
     }

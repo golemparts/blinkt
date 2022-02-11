@@ -81,11 +81,10 @@
 //! ```rust,no_run
 //! # use std::error::Error;
 //! #
-//! # use blinkt::Blinkt;
+//! # use blinkt::{Blinkt, BlinktSpi};
 //! #
-//! # fn main() -> Result<(), Box<dyn Error>> {
-//! let mut blinkt = Blinkt::with_spi(16_000_000, 144)?;
-//! # Ok(())
+//! # fn main() {
+//! let mut blinkt = Blinkt::with_spi(BlinktSpi::default(), 144);
 //! # }
 //! ```
 //!
@@ -154,7 +153,6 @@ use std::result;
 use std::slice;
 
 use rppal::gpio::{Gpio, OutputPin};
-use rppal::spi;
 
 pub use rppal::gpio::Error as GpioError;
 pub use rppal::spi::Error as SpiError;
@@ -195,20 +193,20 @@ impl fmt::Display for Error {
 impl error::Error for Error {}
 
 impl From<io::Error> for Error {
-    fn from(err: io::Error) -> Error {
-        Error::Io(err)
+    fn from(err: io::Error) -> Self {
+        Self::Io(err)
     }
 }
 
 impl From<GpioError> for Error {
-    fn from(err: GpioError) -> Error {
-        Error::Gpio(err)
+    fn from(err: GpioError) -> Self {
+        Self::Gpio(err)
     }
 }
 
 impl From<SpiError> for Error {
-    fn from(err: SpiError) -> Error {
-        Error::Spi(err)
+    fn from(err: SpiError) -> Self {
+        Self::Spi(err)
     }
 }
 
@@ -225,7 +223,7 @@ struct BlinktGpio {
 }
 
 impl BlinktGpio {
-    pub fn with_settings(pin_data: u8, pin_clock: u8) -> Result<BlinktGpio> {
+    pub fn with_settings(pin_data: u8, pin_clock: u8) -> Result<Self> {
         let gpio = Gpio::new()?;
 
         let mut pin_data = gpio.get(pin_data)?.into_output();
@@ -234,7 +232,7 @@ impl BlinktGpio {
         pin_data.set_low();
         pin_clock.set_low();
 
-        Ok(BlinktGpio {
+        Ok(Self {
             pin_data,
             pin_clock,
         })
@@ -260,26 +258,41 @@ impl SerialOutput for BlinktGpio {
     }
 }
 
-struct BlinktSpi {
-    spi: spi::Spi,
+pub mod spi {
+    pub(crate) use rppal::spi::Spi;
+    pub use rppal::spi::{Bus, Mode, SlaveSelect};
 }
 
+pub struct BlinktSpi(spi::Spi);
+
 impl BlinktSpi {
-    pub fn with_settings(clock_speed_hz: u32) -> Result<BlinktSpi> {
-        Ok(BlinktSpi {
-            spi: spi::Spi::new(
+    pub fn with_settings(
+        bus: spi::Bus,
+        slave: spi::SlaveSelect,
+        clock_speed_hz: u32,
+        mode: spi::Mode,
+    ) -> Result<Self> {
+        Ok(Self(spi::Spi::new(bus, slave, clock_speed_hz, mode)?))
+    }
+}
+
+impl Default for BlinktSpi {
+    fn default() -> Self {
+        Self(
+            spi::Spi::new(
                 spi::Bus::Spi0,
                 spi::SlaveSelect::Ss0,
-                clock_speed_hz,
+                1_000_000,
                 spi::Mode::Mode0,
-            )?,
-        })
+            )
+            .expect("Can't create spi bus"),
+        )
     }
 }
 
 impl SerialOutput for BlinktSpi {
     fn write(&mut self, data: &[u8]) -> Result<()> {
-        self.spi.write(data)?;
+        self.0.write(data)?;
 
         Ok(())
     }
@@ -304,15 +317,15 @@ impl Blinkt {
     ///
     /// This sets the data pin to GPIO 23 (physical pin 16), the clock pin to
     /// GPIO 24 (physical pin 18), and number of pixels to 8.
-    pub fn new() -> Result<Blinkt> {
-        Blinkt::with_settings(DAT, CLK, NUM_PIXELS)
+    pub fn new() -> Result<Self> {
+        Self::with_settings(DAT, CLK, NUM_PIXELS)
     }
 
     /// Constructs a new `Blinkt` using bitbanging mode, with custom settings for
     /// the data pin, clock pin, and number of pixels. Pins should be specified
     /// by their BCM GPIO pin numbers.
-    pub fn with_settings(pin_data: u8, pin_clock: u8, num_pixels: usize) -> Result<Blinkt> {
-        Ok(Blinkt {
+    pub fn with_settings(pin_data: u8, pin_clock: u8, num_pixels: usize) -> Result<Self> {
+        Ok(Self {
             serial_output: Box::new(BlinktGpio::with_settings(pin_data, pin_clock)?),
             pixels: vec![Pixel::default(); num_pixels],
             clear_on_drop: true,
@@ -332,13 +345,13 @@ impl Blinkt {
     /// 32 MHz (32_000_000) seems to be the maximum clock speed for a typical
     /// short LED strip. Visit the [Raspberry Pi SPI Documentation](https://www.raspberrypi.org/documentation/hardware/raspberrypi/spi/)
     /// page for a complete list of supported clock speeds.
-    pub fn with_spi(clock_speed_hz: u32, num_pixels: usize) -> Result<Blinkt> {
-        Ok(Blinkt {
-            serial_output: Box::new(BlinktSpi::with_settings(clock_speed_hz)?),
+    pub fn with_spi(spi: BlinktSpi, num_pixels: usize) -> Self {
+        Self {
+            serial_output: Box::new(spi),
             pixels: vec![Pixel::default(); num_pixels],
             clear_on_drop: true,
             end_frame: vec![0u8; 4 + (((num_pixels as f32 / 16.0f32) + 0.94f32) as usize)],
-        })
+        }
     }
 
     /// Returns a mutable iterator over all `Pixel`s stored in `Blinkt`.
@@ -477,7 +490,7 @@ pub struct IterMut<'a> {
 impl<'a> Iterator for IterMut<'a> {
     type Item = &'a mut Pixel;
 
-    fn next(&mut self) -> Option<&'a mut Pixel> {
+    fn next(&mut self) -> Option<Self::Item> {
         self.iter_mut.next()
     }
 }
