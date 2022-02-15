@@ -355,10 +355,8 @@ impl Blinkt {
     }
 
     /// Returns a mutable iterator over all `Pixel`s stored in `Blinkt`.
-    pub fn iter_mut(&mut self) -> IterMut<'_> {
-        IterMut {
-            iter_mut: self.pixels.iter_mut(),
-        }
+    pub fn iter_mut(&mut self) -> slice::IterMut<'_, Pixel> {
+        self.pixels.iter_mut()
     }
 
     /// Sets the red, green and blue values for a single pixel in the local
@@ -482,22 +480,9 @@ impl Drop for Blinkt {
     }
 }
 
-/// A mutable iterator over all `Pixel`s stored in `Blinkt`.
-pub struct IterMut<'a> {
-    iter_mut: slice::IterMut<'a, Pixel>,
-}
-
-impl<'a> Iterator for IterMut<'a> {
-    type Item = &'a mut Pixel;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        self.iter_mut.next()
-    }
-}
-
 impl<'a> IntoIterator for &'a mut Blinkt {
     type Item = &'a mut Pixel;
-    type IntoIter = IterMut<'a>;
+    type IntoIter = slice::IterMut<'a, Pixel>;
 
     fn into_iter(self) -> Self::IntoIter {
         self.iter_mut()
