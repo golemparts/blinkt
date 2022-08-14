@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2021 Rene van der Meer
+// Copyright (c) 2016-2022 Rene van der Meer
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
@@ -150,8 +150,8 @@ use std::error;
 use std::fmt;
 use std::io;
 use std::result;
-use std::time::Duration;
 use std::slice;
+use std::time::Duration;
 
 use rppal::gpio::{Gpio, OutputPin};
 

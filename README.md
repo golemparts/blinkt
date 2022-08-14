@@ -13,7 +13,7 @@ Both the original APA102 and the SK9822 clone are supported. The RGB LED/driver 
 
 Backwards compatibility for minor revisions isn't guaranteed until the library reaches v1.0.0.
 
-Blinkt is under active development on the [master branch](https://github.com/golemparts/blinkt/tree/master) of the repository on GitHub. If you're looking for the `README.md` or the `examples` directory for the latest release or any of the earlier releases, visit [crates.io](https://crates.io/crates/blinkt), download an archived release from the GitHub [releases](https://github.com/golemparts/blinkt/releases) page, or clone and checkout the relevant release tag.
+Blinkt is under development on the [master branch](https://github.com/golemparts/blinkt/tree/master) of the repository on GitHub. If you're looking for the `README.md` or the `examples` directory for the latest release or any of the earlier releases, visit [crates.io](https://crates.io/crates/blinkt), download an archived release from the GitHub [releases](https://github.com/golemparts/blinkt/releases) page, or clone and checkout the relevant release tag.
 
 ## Documentation
 
@@ -25,11 +25,11 @@ Online documentation is available for the latest release, older releases, and th
 
 ## Usage
 
-Add a dependency for `blinkt` to your `Cargo.toml`.
+Add a dependency for `blinkt` to your `Cargo.toml` with `cargo add blinkt`, or by adding it manually to your dependency section.
 
 ```toml
 [dependencies]
-blinkt = "0.6.0"
+blinkt = "0.7.0"
 ```
 
 Call `Blinkt::new()` to create a new Blinkt with the default settings. Alternative configuration options are available through `Blinkt::with_settings()` and `Blinkt::with_spi()`.
@@ -112,4 +112,4 @@ In the root directory of your project, create a `.vscode` subdirectory, and then
 
 ## Copyright and license
 
-Copyright (c) 2016-2021 Rene van der Meer. Released under the [MIT license](LICENSE).
+Copyright (c) 2016-2022 Rene van der Meer. Released under the [MIT license](LICENSE).
