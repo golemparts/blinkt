@@ -150,6 +150,7 @@ use std::error;
 use std::fmt;
 use std::io;
 use std::result;
+use std::time::Duration;
 use std::slice;
 
 use rppal::gpio::{Gpio, OutputPin};
@@ -250,6 +251,7 @@ impl SerialOutput for BlinktGpio {
                 }
 
                 self.pin_clock.set_high();
+                std::thread::sleep(Duration::from_nanos(10000));
                 self.pin_clock.set_low();
             }
         }
