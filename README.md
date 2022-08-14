@@ -25,7 +25,7 @@ Online documentation is available for the latest release, older releases, and th
 
 ## Usage
 
-Add a dependency for `blinkt` to your `Cargo.toml` with `cargo add blinkt`, or by adding it manually to your dependency section.
+Add a dependency for `blinkt` to your `Cargo.toml` using `cargo add blinkt`, or by adding the following line to your dependencies section.
 
 ```toml
 [dependencies]
