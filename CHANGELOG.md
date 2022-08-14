@@ -1,8 +1,11 @@
 # Changelog
 
-## 0.7.0 (TBD)
+## 0.7.0 (Aug 14, 2022)
 
 * (Breaking change) Transition to Rust 2021, requiring rustc v1.56.0 or newer to compile the library.
+* Fix display issues under high CPU load (contributed by @ashhhleyyy).
+* Change iterator type to `slice::IterMut` (contributed by @hellow554).
+* Extend SPI interface with bus, SS and mode selection (contributed by @hellow554).
 * Upgrade `rppal` dependency to 0.13.1.
 
 ## 0.6.0 (May 12, 2021)
