@@ -29,7 +29,7 @@ Add a dependency for `blinkt` to your `Cargo.toml` using `cargo add blinkt`, or 
 
 ```toml
 [dependencies]
-blinkt = "0.7.0"
+blinkt = "0.7.1"
 ```
 
 Call `Blinkt::new()` to create a new Blinkt with the default settings. Alternative configuration options are available through `Blinkt::with_settings()` and `Blinkt::with_spi()`.

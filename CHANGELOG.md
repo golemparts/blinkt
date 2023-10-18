@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.1 (Oct 18, 2023)
+
+* Upgrade `rppal` dependency to 0.15.0.
+
 ## 0.7.0 (Aug 14, 2022)
 
 * (Breaking change) Transition to Rust 2021, requiring rustc v1.56.0 or newer to compile the library.
