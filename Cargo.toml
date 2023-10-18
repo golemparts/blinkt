@@ -1,6 +1,6 @@
 [package]
 name = "blinkt"
-version = "0.7.0" # Also update html_root_url in lib.rs
+version = "0.7.0"                                                                                                             # Also update html_root_url in lib.rs
 edition = "2021"
 rust-version = "1.56.0"
 authors = ["Rene van der Meer <rene@golemparts.com>"]
@@ -10,10 +10,10 @@ repository = "https://github.com/golemparts/blinkt"
 readme = "README.md"
 license = "MIT"
 categories = ["embedded", "hardware-support"]
-keywords = ["apa102","sk9822","blinkt","raspberry","pi"]
+keywords = ["apa102", "sk9822", "blinkt", "raspberry", "pi"]
 
 [dependencies]
-rppal = "0.13.1"
+rppal = "0.15.0"
 
 [dev-dependencies]
 rand = "0.8.4"
