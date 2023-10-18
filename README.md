@@ -108,4 +108,4 @@ The rust-analyzer extension for Visual Studio Code needs to be made aware of the
 
 ## Copyright and license
 
-Copyright (c) 2016-2022 Rene van der Meer. Released under the [MIT license](LICENSE).
+Copyright (c) 2016-2023 Rene van der Meer. Released under the [MIT license](LICENSE).
