@@ -1,9 +1,37 @@
 # Blinkt
 
-[![Build Status](https://travis-ci.com/golemparts/blinkt.svg?branch=master)](https://travis-ci.com/golemparts/blinkt)
 [![crates.io](https://img.shields.io/crates/v/blinkt)](https://crates.io/crates/blinkt)
+[![Documentation](https://docs.rs/blinkt/badge.svg)](https://docs.rs/blinkt)
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Minimum rustc version](https://img.shields.io/badge/rustc-v1.56.0-lightgray.svg)](https://blog.rust-lang.org/2021/10/21/Rust-1.56.0.html)
+
+## This project is no longer maintained
+
+As of July 1, 2025, I have decided to retire Blinkt. This means:
+* No new features will be added.
+* Bug fixes will no longer be provided.
+* Support for new hardware is not planned.
+* Pull requests and issues will no longer be reviewed or addressed.
+
+I want to express my sincere gratitude to everyone who contributed to, used, and supported Blinkt over the years. Your contributions and feedback were invaluable.
+
+### Why have I retired Blinkt?
+
+Blinkt began as a passion project in 2016, nearly nine years ago, when I first started working with electronics and needed a project to work on my Rust skills. 
+
+However, over the past several years, my personal interests and professional focus have shifted away from electronics. As a result, I haven't actively used Blinkt myself for quite some time. I no longer have a dedicated hardware test setup, nor do I plan on adding new Raspberry Pi models to my collection. This makes it impractical to thoroughly test changes or ensure compatibility with new hardware releases.
+
+Maintaining a project requires significant dedication, and without active personal use or the necessary testing environment, it's become challenging to provide the level of attention this project deserves.
+
+### What does this mean for you?
+
+You are welcome to continue using Blinkt. However, please be aware you will not receive any further updates or support.
+
+#### Forking the project
+
+If you wish to continue its development, you may fork this project under the terms and conditions of the MIT License.
+
+## Blinkt
 
 Blinkt is a Rust library that provides an interface for the Pimoroni Blinkt!, and any similar APA102 or SK9822 LED strips or boards, on a Raspberry Pi. The library supports bitbanging mode on any GPIO pins, and hardware SPI mode on GPIO 10 (physical pin 19) for data, and GPIO 11 (physical pin 23) for clock.
 
@@ -14,14 +42,6 @@ Both the original APA102 and the SK9822 clone are supported. The RGB LED/driver 
 Backwards compatibility for minor revisions isn't guaranteed until the library reaches v1.0.0.
 
 Blinkt is under development on the [master branch](https://github.com/golemparts/blinkt/tree/master) of the repository on GitHub. If you're looking for the `README.md` or the `examples` directory for the latest release or any of the earlier releases, visit [crates.io](https://crates.io/crates/blinkt), download an archived release from the GitHub [releases](https://github.com/golemparts/blinkt/releases) page, or clone and checkout the relevant release tag.
-
-## Documentation
-
-Online documentation is available for the latest release, older releases, and the version currently in development.
-
-* Latest release: [docs.golemparts.com/blinkt](https://docs.golemparts.com/blinkt)
-* Older releases: [docs.rs/blinkt](https://docs.rs/blinkt)
-* In development: [docs.golemparts.com/blinkt-dev](https://docs.golemparts.com/blinkt-dev)
 
 ## Usage
 
@@ -108,4 +128,4 @@ The rust-analyzer extension for Visual Studio Code needs to be made aware of the
 
 ## Copyright and license
 
-Copyright (c) 2016-2023 Rene van der Meer. Released under the [MIT license](LICENSE).
+Copyright (c) 2016-2025 Rene van der Meer. Released under the [MIT license](LICENSE).
